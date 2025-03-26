@@ -10,7 +10,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-<<<<<<< Updated upstream
   final prefs = await SharedPreferences.getInstance();
   String? userEmail = prefs.getString("userEmail");
 
@@ -20,13 +19,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   final String initialRoute;
   MyApp({required this.initialRoute});
-=======
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
->>>>>>> Stashed changes
 
   @override
   Widget build(BuildContext context) {
