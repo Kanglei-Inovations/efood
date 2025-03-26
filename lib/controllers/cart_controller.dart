@@ -1,17 +1,18 @@
 import 'package:get/get.dart';
-import '../data/models/food_model.dart';
+import '../data/models/product_model.dart';
 
 class CartController extends GetxController {
-  var cartItems = <FoodModel>[].obs;
+  var cartItems = <ProductModel>[].obs;
 
-  void addToCart(FoodModel food) {
-    cartItems.add(food);
-    Get.snackbar("Added", "${food.name} added to cart!");
+  void addToCart(ProductModel product) {
+    cartItems.add(product);
   }
 
-  void removeFromCart(FoodModel food) {
-    cartItems.remove(food);
+  void removeFromCart(ProductModel product) {
+    cartItems.remove(product);
   }
 
-  double get totalPrice => cartItems.fold(0, (sum, item) => sum + item.price);
+  double get totalPrice {
+    return cartItems.fold(0, (sum, item) => sum + item.price);
+  }
 }

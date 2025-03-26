@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/cart_controller.dart';
+import '../../data/models/product_model.dart';
 
 class CartScreen extends StatelessWidget {
   final CartController cartController = Get.find();
@@ -20,14 +21,14 @@ class CartScreen extends StatelessWidget {
               child: ListView.builder(
                 itemCount: cartController.cartItems.length,
                 itemBuilder: (context, index) {
-                  var food = cartController.cartItems[index];
+                  ProductModel product = cartController.cartItems[index];
                   return ListTile(
-                    leading: Image.network(food.image, width: 50, height: 50, fit: BoxFit.cover),
-                    title: Text(food.name),
-                    subtitle: Text("\$${food.price}"),
+                    leading: Image.network(product.images[1], width: 50, height: 50, fit: BoxFit.cover),
+                    title: Text(product.name),
+                    subtitle: Text("\$${product.price}"),
                     trailing: IconButton(
                       icon: Icon(Icons.remove_circle, color: Colors.red),
-                      onPressed: () => cartController.removeFromCart(food),
+                      onPressed: () => cartController.removeFromCart(product),
                     ),
                   );
                 },

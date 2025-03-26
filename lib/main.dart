@@ -10,7 +10,6 @@ import 'controllers/auth_controller.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  // Register AuthController before running the app
   final prefs = await SharedPreferences.getInstance();
   String? userEmail = prefs.getString("userEmail");
   runApp(MyApp(initialRoute: userEmail != null ? AppRoutes.home : AppRoutes.login));

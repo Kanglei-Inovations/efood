@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../admin/bindings/product_binding.dart';
 import '../views/auth/login_screen.dart';
 import '../views/auth/register_screen.dart';
 import '../views/home/home_screen.dart';
@@ -16,7 +17,11 @@ class AppRoutes {
   static final pages = [
     GetPage(name: login, page: () => LoginScreen(), binding: AuthBinding()),
     GetPage(name: register, page: () => RegisterScreen(), binding: AuthBinding()),
-    GetPage(name: home, page: () => HomeScreen(), binding: HomeBinding()),
+    GetPage(
+      name: home,
+      page: () => HomeScreen(),
+      bindings: [HomeBinding(), ProductBinding()], // ✅ Use "bindings" instead of "binding"
+    ),
     GetPage(name: cart, page: () => CartScreen(), binding: CartBinding()),
   ];
 }

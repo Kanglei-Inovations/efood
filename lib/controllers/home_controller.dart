@@ -1,24 +1,30 @@
 import 'package:get/get.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../data/models/food_model.dart';
+import '../data/models/product_model.dart';
+import '../data/services/firestore_service.dart';
 
 class HomeController extends GetxController {
-  var foodList = <FoodModel>[].obs;
   var isLoading = true.obs;
+  var foodList =
+      <ProductModel>[].obs; // Ensure ProductModel is correctly structured
 
   @override
   void onInit() {
-    fetchFoodItems();
     super.onInit();
+    fetchProducts();
   }
 
-  Future<void> fetchFoodItems() async {
+  void fetchProducts() async {
     try {
       isLoading(true);
-      var snapshot = await FirebaseFirestore.instance.collection("food_items").get();
-      foodList.assignAll(snapshot.docs.map((doc) => FoodModel.fromSnapshot(doc)));
+      var products =
+          await FirestoreService().getProducts(); // Fetch from Firestore
+      if (products.isNotEmpty) {
+        foodList.assignAll(products); // Update list
+      } else {
+        print("No products found in Firestore.");
+      }
     } catch (e) {
-      Get.snackbar("Error", e.toString());
+      print("Error fetching products: $e");
     } finally {
       isLoading(false);
     }

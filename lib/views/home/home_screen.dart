@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../admin/controllers/product_controller.dart';
 import '../../admin/views/add_product_screen.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/home_controller.dart';
@@ -9,6 +10,8 @@ class HomeScreen extends StatelessWidget {
   final HomeController homeController = Get.find();
   final CartController cartController = Get.find();
   final AuthController authController = Get.find<AuthController>();
+  final ProductController productController = Get.find<ProductController>(); // Find registered controller
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +58,7 @@ class HomeScreen extends StatelessWidget {
           itemBuilder: (context, index) {
             var food = homeController.foodList[index];
             return ListTile(
-              leading: Image.network(food.image, width: 50, height: 50, fit: BoxFit.cover),
+              // leading: Image.network(food.imageUrl, width: 50, height: 50, fit: BoxFit.cover),
               title: Text(food.name),
               subtitle: Text("\$${food.price}"),
               trailing: ElevatedButton(

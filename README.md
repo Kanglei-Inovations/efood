@@ -117,7 +117,13 @@ Show order history 🛍️
 - **Beautiful UI with Animations**
 - **Dark Mode Support**
 - **Responsive Design for Mobile & Desktop**
-
+  🔹 Features Added:
+  ✅ Multiple Image Picker (Supports selecting single or multiple images from storage).
+  ✅ Category & Sub-Category Dropdowns (With predefined options).
+  ✅ Packaging Type Dropdown (Choose from different packaging options).
+  ✅ Switch Toggles for Availability & Takeaway Only.
+  ✅ Uses GetX for Real-Time Updates.
+  ✅ Ensures Required Fields are Filled Before Submitting.
 ---
 
 Do you want a starter template with Firebase setup? 🚀
