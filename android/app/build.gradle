@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.kangleiinovations.efood"
-    compileSdk = 35
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
