@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -46,21 +47,28 @@ class _AddProductScreenState extends State<AddProductScreen> {
       });
     }
   }
-
+  Future<void> checkAuth() async {
+    if (FirebaseAuth.instance.currentUser == null) {
+      await FirebaseAuth.instance.signInAnonymously(); // Sign in anonymously if no user
+    }
+  }
   // Upload Images to Firebase Storage
   Future<List<String>> uploadImages() async {
+    checkAuth();
     List<String> imageUrls = [];
     for (var image in selectedImages) {
       String fileName = Uuid().v4();
       Reference ref = FirebaseStorage.instance.ref().child("products/$fileName.jpg");
       await ref.putFile(image);
       String imageUrl = await ref.getDownloadURL();
+      print("Uploaded Image URL: $imageUrl");
       imageUrls.add(imageUrl);
     }
     return imageUrls;
   }
 
   void addProduct() async {
+    checkAuth();
     if (nameController.text.isEmpty || priceController.text.isEmpty || selectedCategory == null) {
       Get.snackbar("Error", "Name, Price, and Category are required", backgroundColor: Colors.red, colorText: Colors.white);
       return;
