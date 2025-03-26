@@ -15,7 +15,7 @@ class RegisterScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Register", style: Theme.of(context).textTheme.headline4),
+            Text("Register", style: Theme.of(context).textTheme.headlineLarge),
             TextField(
               controller: emailController,
               decoration: InputDecoration(labelText: "Email"),

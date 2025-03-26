@@ -5,8 +5,8 @@ class AppTheme {
     primarySwatch: Colors.orange,
     fontFamily: 'Roboto',
     textTheme: const TextTheme(
-      headline1: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-      bodyText1: TextStyle(fontSize: 16),
+      headlineLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      bodyLarge: TextStyle(fontSize: 16),
     ),
     buttonTheme: const ButtonThemeData(
       buttonColor: Colors.orange,
