@@ -75,7 +75,35 @@ lib/
 │
 └── pubspec.yaml
 ```
+1️⃣ Cart Functionality
+Add items to the cart 🛒
 
+Remove items from the cart ❌
+
+Show total price 💰
+
+Use CartController (GetX) & CartProvider (Provider)
+
+2️⃣ Order Management
+Checkout process ✅
+
+Store orders in Firestore 📂
+
+Display order history 📜
+
+Use OrderController & OrderProvider
+
+3️⃣ UI Enhancements
+Improve UI for product listing 🎨
+
+Create a beautiful product detail page 🖼️
+
+Add a loading indicator during Firebase operations ⏳
+
+4️⃣ User Profile
+Edit user details ✏️
+
+Show order history 🛍️
 ---
 
 ## ✅ Features:

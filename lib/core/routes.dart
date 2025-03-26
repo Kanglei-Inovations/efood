@@ -2,15 +2,21 @@ import 'package:get/get.dart';
 import '../views/auth/login_screen.dart';
 import '../views/auth/register_screen.dart';
 import '../views/home/home_screen.dart';
+import '../views/cart/cart_screen.dart';
+import '../bindings/auth_binding.dart';
+import '../bindings/home_binding.dart';
+import '../bindings/cart_binding.dart';
 
 class AppRoutes {
-  static const String login = '/login';
-  static const String register = '/register';
-  static const String home = '/home';
+  static const login = "/login";
+  static const register = "/register";
+  static const home = "/home";
+  static const cart = "/cart";
 
-  static List<GetPage> pages = [
-    GetPage(name: login, page: () => LoginScreen()),
-    GetPage(name: register, page: () => RegisterScreen()),
-    GetPage(name: home, page: () => HomeScreen()),
+  static final pages = [
+    GetPage(name: login, page: () => LoginScreen(), binding: AuthBinding()),
+    GetPage(name: register, page: () => RegisterScreen(), binding: AuthBinding()),
+    GetPage(name: home, page: () => HomeScreen(), binding: HomeBinding()),
+    GetPage(name: cart, page: () => CartScreen(), binding: CartBinding()),
   ];
 }
