@@ -1,25 +1,27 @@
 import 'package:get/get.dart';
 import '../data/models/product_model.dart';
-import '../data/services/firestore_service.dart';
 
 class HomeController extends GetxController {
-  var isLoading = true.obs;
-  var foodList = <ProductModel>[].obs;
-  final FirestoreService _firestoreService = FirestoreService();
+  var allProducts = <ProductModel>[].obs;
+  var filteredProducts = <ProductModel>[].obs;
+  var categories = <String>[].obs;
+  var selectedCategory = ''.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    listenToProducts(); // Start listening for changes
+  void filterProducts(String query) {
+    filteredProducts.value = allProducts.where((product) => product.name.toLowerCase().contains(query.toLowerCase())).toList();
   }
 
-  void listenToProducts() {
-    _firestoreService.streamProducts().listen((products) {
-      foodList.assignAll(products);
-      isLoading(false);
-    }, onError: (e) {
-      print("Error streaming products: $e");
-      isLoading(false);
-    });
+  void extractCategories() {
+    var uniqueCategories = allProducts.map((p) => p.category).toSet().toList();
+    categories.assignAll(uniqueCategories);
+  }
+
+  void filterByCategory(String category) {
+    selectedCategory.value = category;
+    if (category.isEmpty) {
+      filteredProducts.assignAll(allProducts);
+    } else {
+      filteredProducts.value = allProducts.where((p) => p.category == category).toList();
+    }
   }
 }
