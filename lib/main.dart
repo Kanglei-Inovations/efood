@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'bindings/auth_binding.dart';
 import 'core/theme.dart';
 import 'core/routes.dart';
-import 'controllers/auth_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +16,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   final String initialRoute;
-  MyApp({required this.initialRoute});
+  const MyApp({super.key, required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {

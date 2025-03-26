@@ -8,7 +8,7 @@ class FirestoreService {
   Stream<List<ProductModel>> streamProducts() {
     return _firestore.collection('products').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        return ProductModel.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+        return ProductModel.fromMap(doc.data(), doc.id);
       }).toList();
     });
   }

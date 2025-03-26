@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,11 +11,13 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 
 class AddProductScreen extends StatefulWidget {
+  const AddProductScreen({super.key});
+
   @override
-  _AddProductScreenState createState() => _AddProductScreenState();
+  AddProductScreenState createState() => AddProductScreenState();
 }
 
-class _AddProductScreenState extends State<AddProductScreen> {
+class AddProductScreenState extends State<AddProductScreen> {
   final ProductController productController = Get.find<ProductController>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descController = TextEditingController();
@@ -57,11 +60,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
     checkAuth();
     List<String> imageUrls = [];
     for (var image in selectedImages) {
-      String fileName = Uuid().v4();
+      String fileName = const Uuid().v4();
       Reference ref = FirebaseStorage.instance.ref().child("products/$fileName.jpg");
       await ref.putFile(image);
       String imageUrl = await ref.getDownloadURL();
-      print("Uploaded Image URL: $imageUrl");
+      if (kDebugMode) {
+        print("Uploaded Image URL: $imageUrl");
+      }
       imageUrls.add(imageUrl);
     }
     return imageUrls;
@@ -77,7 +82,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     List<String> imageUrls = await uploadImages(); // Upload images first
 
     final newProduct = ProductModel(
-      id: Uuid().v4(),
+      id: const Uuid().v4(),
       name: nameController.text,
       description: descController.text,
       price: double.parse(priceController.text),
@@ -101,24 +106,24 @@ class _AddProductScreenState extends State<AddProductScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Add Product")),
+      appBar: AppBar(title: const Text("Add Product")),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             // Name Input
-            TextField(controller: nameController, decoration: InputDecoration(labelText: "Product Name")),
+            TextField(controller: nameController, decoration: const InputDecoration(labelText: "Product Name")),
             // Description Input
-            TextField(controller: descController, decoration: InputDecoration(labelText: "Description")),
+            TextField(controller: descController, decoration: const InputDecoration(labelText: "Description")),
             // Price Input
-            TextField(controller: priceController, decoration: InputDecoration(labelText: "Price"), keyboardType: TextInputType.number),
+            TextField(controller: priceController, decoration: const InputDecoration(labelText: "Price"), keyboardType: TextInputType.number),
             // Discount Input
-            TextField(controller: discountController, decoration: InputDecoration(labelText: "Discount (Optional)"), keyboardType: TextInputType.number),
+            TextField(controller: discountController, decoration: const InputDecoration(labelText: "Discount (Optional)"), keyboardType: TextInputType.number),
 
             // Category Dropdown
             DropdownButtonFormField<String>(
               value: selectedCategory,
-              hint: Text("Select Category"),
+              hint: const Text("Select Category"),
               items: categories.map((cat) => DropdownMenuItem(value: cat, child: Text(cat))).toList(),
               onChanged: (value) {
                 setState(() {
@@ -132,7 +137,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             if (selectedCategory != null)
               DropdownButtonFormField<String>(
                 value: selectedSubCategory,
-                hint: Text("Select Sub-Category"),
+                hint: const Text("Select Sub-Category"),
                 items: subCategories[selectedCategory]?.map((sub) => DropdownMenuItem(value: sub, child: Text(sub))).toList(),
                 onChanged: (value) => setState(() => selectedSubCategory = value),
               ),
@@ -140,7 +145,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             // Packaging Type Dropdown
             DropdownButtonFormField<String>(
               value: selectedPackagingType,
-              hint: Text("Select Packaging Type"),
+              hint: const Text("Select Packaging Type"),
               items: packagingOptions.map((pack) => DropdownMenuItem(value: pack, child: Text(pack))).toList(),
               onChanged: (value) => setState(() => selectedPackagingType = value),
             ),
@@ -148,8 +153,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
             // Image Picker Button
             ElevatedButton.icon(
               onPressed: pickImages,
-              icon: Icon(Icons.image),
-              label: Text("Select Images"),
+              icon: const Icon(Icons.image),
+              label: const Text("Select Images"),
             ),
 
             // Display Selected Images
@@ -170,27 +175,27 @@ class _AddProductScreenState extends State<AddProductScreen> {
             // ✅ Added Preparation Time Field
             TextField(
               controller: preparationTimeController,
-              decoration: InputDecoration(labelText: "Preparation Time (in minutes)"),
+              decoration: const InputDecoration(labelText: "Preparation Time (in minutes)"),
               keyboardType: TextInputType.number,
             ),
             // Availability Switch
             SwitchListTile(
-              title: Text("Available"),
+              title: const Text("Available"),
               value: isAvailable,
               onChanged: (value) => setState(() => isAvailable = value),
             ),
 
             // Takeaway Only Switch
             SwitchListTile(
-              title: Text("Takeaway Only"),
+              title: const Text("Takeaway Only"),
               value: isTakeawayOnly,
               onChanged: (value) => setState(() => isTakeawayOnly = value),
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: addProduct,
-              child: Text("Add Product"),
+              child: const Text("Add Product"),
             ),
           ],
         ),

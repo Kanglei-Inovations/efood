@@ -7,6 +7,8 @@ class RegisterScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  RegisterScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,14 +20,14 @@ class RegisterScreen extends StatelessWidget {
             Text("Register", style: Theme.of(context).textTheme.headlineLarge),
             TextField(
               controller: emailController,
-              decoration: InputDecoration(labelText: "Email"),
+              decoration: const InputDecoration(labelText: "Email"),
             ),
             TextField(
               controller: passwordController,
               obscureText: true,
-              decoration: InputDecoration(labelText: "Password"),
+              decoration: const InputDecoration(labelText: "Password"),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 authController.register(
@@ -33,11 +35,11 @@ class RegisterScreen extends StatelessWidget {
                   passwordController.text,
                 );
               },
-              child: Text("Register"),
+              child: const Text("Register"),
             ),
             TextButton(
               onPressed: () => Get.back(),
-              child: Text("Already have an account? Login"),
+              child: const Text("Already have an account? Login"),
             ),
           ],
         ),

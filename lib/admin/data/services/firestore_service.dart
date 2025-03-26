@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import '../models/product_model.dart';
 
 class FirestoreService {
@@ -9,7 +10,9 @@ class FirestoreService {
     try {
       await _firestore.collection('products').doc(product.id).set(product.toMap());
     } catch (e) {
-      print("Error adding product: $e");
+      if (kDebugMode) {
+        print("Error adding product: $e");
+      }
     }
   }
 
@@ -21,7 +24,9 @@ class FirestoreService {
           .map((doc) => ProductModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
     } catch (e) {
-      print("Error fetching products: $e");
+      if (kDebugMode) {
+        print("Error fetching products: $e");
+      }
       return [];
     }
   }

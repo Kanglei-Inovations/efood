@@ -52,7 +52,7 @@ class AuthController extends GetxController {
     String? email = prefs.getString("userEmail");
 
     if (email != null) {
-      Future.delayed(Duration(seconds: 2), () => Get.offAllNamed(AppRoutes.home));
+      Future.delayed(const Duration(seconds: 2), () => Get.offAllNamed(AppRoutes.home));
     }
   }
 

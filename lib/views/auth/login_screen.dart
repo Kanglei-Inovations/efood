@@ -8,6 +8,8 @@ class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  LoginScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,14 +21,14 @@ class LoginScreen extends StatelessWidget {
             Text("Login", style: Theme.of(context).textTheme.headlineLarge),
             TextField(
               controller: emailController,
-              decoration: InputDecoration(labelText: "Email"),
+              decoration: const InputDecoration(labelText: "Email"),
             ),
             TextField(
               controller: passwordController,
               obscureText: true,
-              decoration: InputDecoration(labelText: "Password"),
+              decoration: const InputDecoration(labelText: "Password"),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 authController.login(
@@ -34,11 +36,11 @@ class LoginScreen extends StatelessWidget {
                   passwordController.text,
                 );
               },
-              child: Text("Login"),
+              child: const Text("Login"),
             ),
             TextButton(
               onPressed: () => Get.toNamed(AppRoutes.register),
-              child: Text("Don't have an account? Register"),
+              child: const Text("Don't have an account? Register"),
             ),
           ],
         ),

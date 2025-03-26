@@ -9,10 +9,10 @@ class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Cart")),
+      appBar: AppBar(title: const Text("Cart")),
       body: Obx(() {
         if (cartController.cartItems.isEmpty) {
-          return Center(child: Text("Your cart is empty"));
+          return const Center(child: Text("Your cart is empty"));
         }
 
         return Column(
@@ -27,7 +27,7 @@ class CartScreen extends StatelessWidget {
                     title: Text(product.name),
                     subtitle: Text("₹ ${product.price}"),
                     trailing: IconButton(
-                      icon: Icon(Icons.remove_circle, color: Colors.red),
+                      icon: const Icon(Icons.remove_circle, color: Colors.red),
                       onPressed: () => cartController.removeFromCart(product),
                     ),
                   );
