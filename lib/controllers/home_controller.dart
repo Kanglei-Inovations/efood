@@ -5,10 +5,12 @@ class HomeController extends GetxController {
   var allProducts = <ProductModel>[].obs;
   var filteredProducts = <ProductModel>[].obs;
   var categories = <String>[].obs;
-  var selectedCategory = ''.obs;
+  var selectedCategory = RxnString(); // ✅ Ensure it is nullable from the start
 
   void filterProducts(String query) {
-    filteredProducts.value = allProducts.where((product) => product.name.toLowerCase().contains(query.toLowerCase())).toList();
+    filteredProducts.value = allProducts
+        .where((product) => product.name.toLowerCase().contains(query.toLowerCase()))
+        .toList();
   }
 
   void extractCategories() {
@@ -17,10 +19,11 @@ class HomeController extends GetxController {
   }
 
   void filterByCategory(String category) {
-    selectedCategory.value = category;
-    if (category.isEmpty) {
+    if (selectedCategory.value == category) {
+      selectedCategory.value = null; // ✅ Allow unselection
       filteredProducts.assignAll(allProducts);
     } else {
+      selectedCategory.value = category;
       filteredProducts.value = allProducts.where((p) => p.category == category).toList();
     }
   }

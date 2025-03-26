@@ -106,12 +106,16 @@ class HomeScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: ChoiceChip(
                       label: Text(category),
-                      selected: homeController.selectedCategory.value == category,
-                      onSelected: (selected) => homeController.filterByCategory(category),
+                      selected: homeController.selectedCategory.value == category, // ✅ Works with RxnString
+                      onSelected: (selected) {
+                        homeController.filterByCategory(category);
+                      },
                     ),
                   );
                 }).toList(),
               ),
+
+
             )),
 
             const SizedBox(height: 8),
