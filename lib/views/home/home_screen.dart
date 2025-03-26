@@ -5,6 +5,8 @@ import '../../admin/views/add_product_screen.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/home_controller.dart';
 import '../../controllers/cart_controller.dart';
+import '../../data/models/product_model.dart';
+import '../../data/services/firestore_service.dart';
 
 class HomeScreen extends StatelessWidget {
   final HomeController homeController = Get.find();
@@ -50,14 +52,18 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Obx(() {
-        if (homeController.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
-        }
+      body: StreamBuilder<List<ProductModel>>(
+          stream: FirestoreService().streamProducts(), // Real-time Firestore stream
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
 
-        if (homeController.foodList.isEmpty) {
-          return Center(child: Text("No products available"));
-        }
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text("No products available"));
+            }
+
+            var foodList = snapshot.data!;
 
         return Padding(
           padding: const EdgeInsets.all(8.0),
@@ -68,9 +74,10 @@ class HomeScreen extends StatelessWidget {
               mainAxisSpacing: 10,
               childAspectRatio: 0.75,
             ),
-            itemCount: homeController.foodList.length,
+            
+            itemCount: foodList.length,
             itemBuilder: (context, index) {
-              var food = homeController.foodList[index];
+              var food = foodList[index]; // Use StreamBuilder's data directly
               return Card(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 elevation: 4,

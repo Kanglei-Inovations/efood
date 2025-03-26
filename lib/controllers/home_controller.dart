@@ -4,29 +4,22 @@ import '../data/services/firestore_service.dart';
 
 class HomeController extends GetxController {
   var isLoading = true.obs;
-  var foodList =
-      <ProductModel>[].obs; // Ensure ProductModel is correctly structured
+  var foodList = <ProductModel>[].obs;
+  final FirestoreService _firestoreService = FirestoreService();
 
   @override
   void onInit() {
     super.onInit();
-    fetchProducts();
+    listenToProducts(); // Start listening for changes
   }
 
-  void fetchProducts() async {
-    try {
-      isLoading(true);
-      var products =
-          await FirestoreService().getProducts(); // Fetch from Firestore
-      if (products.isNotEmpty) {
-        foodList.assignAll(products); // Update list
-      } else {
-        print("No products found in Firestore.");
-      }
-    } catch (e) {
-      print("Error fetching products: $e");
-    } finally {
+  void listenToProducts() {
+    _firestoreService.streamProducts().listen((products) {
+      foodList.assignAll(products);
       isLoading(false);
-    }
+    }, onError: (e) {
+      print("Error streaming products: $e");
+      isLoading(false);
+    });
   }
 }

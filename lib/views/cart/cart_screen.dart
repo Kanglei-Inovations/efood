@@ -25,7 +25,7 @@ class CartScreen extends StatelessWidget {
                   return ListTile(
                     leading: Image.network(product.images[1], width: 50, height: 50, fit: BoxFit.cover),
                     title: Text(product.name),
-                    subtitle: Text("\$${product.price}"),
+                    subtitle: Text("₹ ${product.price}"),
                     trailing: IconButton(
                       icon: Icon(Icons.remove_circle, color: Colors.red),
                       onPressed: () => cartController.removeFromCart(product),
@@ -38,7 +38,7 @@ class CartScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 onPressed: () => Get.toNamed("/order"),
-                child: Text("Checkout (\$${cartController.totalPrice})"),
+                child: Text("Checkout (₹ ${cartController.totalPrice})"),
               ),
             ),
           ],
