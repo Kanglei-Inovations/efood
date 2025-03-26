@@ -41,6 +41,7 @@ dependencies:
   firebase_storage:
   provider:
   get:
+  shared_preferences:
 
 dev_dependencies:
   flutter_test:
