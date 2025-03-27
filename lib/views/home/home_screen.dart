@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:efood/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../admin/controllers/product_controller.dart';
@@ -22,9 +23,10 @@ class HomeScreen extends StatelessWidget {
         title: const Text("Food Menu"),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add),
+            icon: const Icon(Icons.admin_panel_settings),
             onPressed: () => Get.to(const AddProductScreen()),
           ),
+
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => authController.logout(),

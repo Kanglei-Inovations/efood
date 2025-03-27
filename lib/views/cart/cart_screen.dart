@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import '../../controllers/cart_controller.dart';
 import '../../data/models/product_model.dart';
 
+import '../orders/checkout_screen.dart'; // ✅ Import CheckoutScreen
+
 class CartScreen extends StatelessWidget {
   final CartController cartController = Get.find();
 
@@ -61,7 +63,7 @@ class CartScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
-                onPressed: () => Get.toNamed("/order"),
+                onPressed: () => Get.to(() => CheckoutScreen()), // ✅ Navigate to Checkout
                 child: Text("Checkout (₹ ${cartController.totalPrice})"),
               ),
             ),

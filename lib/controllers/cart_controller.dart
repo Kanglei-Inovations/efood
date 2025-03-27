@@ -67,4 +67,12 @@ class CartController extends GetxController {
       }).toList();
     }
   }
+  void clearCart() async {
+    cartItems.clear(); // Clear the cart items in memory
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove("cartItems"); // Clear saved cart data in SharedPreferences
+    Get.snackbar("Cart Cleared", "Your cart is now empty.");
+    cartItems.refresh(); // Refresh the UI
+  }
+
 }

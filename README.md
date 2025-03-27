@@ -124,7 +124,14 @@ Show order history 🛍️
   ✅ Switch Toggles for Availability & Takeaway Only.
   ✅ Uses GetX for Real-Time Updates.
   ✅ Ensures Required Fields are Filled Before Submitting.
+- 
+  ✅ Features Added
+  ✔ Cart page now has a Checkout button
+  ✔ Navigates to CheckoutScreen where user enters details
+  ✔ placeOrder() method in OrderController saves order to Firestore
+  ✔ Cart clears after placing an order
 
+🚀 Now your checkout process is fully working!
 Great! For checkout and billing, we need to implement:
 
 1. **Checkout Screen** – Display order summary, total price, and payment options.

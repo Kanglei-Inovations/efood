@@ -5,12 +5,14 @@ import '../bindings/home_binding.dart';
 import '../bindings/cart_binding.dart';
 import '../bindings/order_binding.dart';
 import '../main_screen.dart';
+import '../splash_screen.dart';
 import '../views/auth/login_screen.dart';
 import '../views/auth/register_screen.dart';
 import '../views/cart/cart_screen.dart';
 import '../views/orders/order_screen.dart';
 
 class AppRoutes {
+  static const splash = "/"; // ✅ Start with SplashScreen
   static const login = "/login";
   static const register = "/register";
   static const home = "/home";  // Now points to MainScreen
@@ -18,6 +20,7 @@ class AppRoutes {
   static const orders = "/orders";
 
   static final pages = [
+    GetPage(name: splash, page: () => SplashScreen()), // ✅ Splash First
     GetPage(name: login, page: () => LoginScreen(), binding: AuthBinding()),
     GetPage(name: register, page: () => RegisterScreen(), binding: AuthBinding()),
     GetPage(
