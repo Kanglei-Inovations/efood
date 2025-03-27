@@ -143,4 +143,28 @@ class ProductDetailsScreen extends StatelessWidget {
                     label: Text("Add to Cart"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orange,
-                      shape: RoundedRectangleBorder(border
+                      shape: RoundedRectangleBorder(border-radius: BorderRadius.circular(8)), ), ), ),
+                            SizedBox(height: 10),
+
+            // Buy Now Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  cartController.addToCart(product);
+                  Get.toNamed('/checkout');
+                },
+                child: Text("Buy Now"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  ),
+);} }
+    
