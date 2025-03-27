@@ -15,7 +15,6 @@ class UserModel {
     required this.imageUrl,
   });
 
-  // Convert to Map for Firebase
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
@@ -27,7 +26,6 @@ class UserModel {
     };
   }
 
-  // Convert from Firebase Document to UserModel
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       uid: map['uid'] ?? '',
@@ -39,17 +37,9 @@ class UserModel {
     );
   }
 
-  // ✅ Add copyWith method
-  UserModel copyWith({
-    String? uid,
-    String? name,
-    String? phone,
-    String? email,
-    String? address,
-    String? imageUrl,
-  }) {
+  UserModel copyWith({String? name, String? phone, String? email, String? address, String? imageUrl}) {
     return UserModel(
-      uid: uid ?? this.uid,
+      uid: uid,
       name: name ?? this.name,
       phone: phone ?? this.phone,
       email: email ?? this.email,

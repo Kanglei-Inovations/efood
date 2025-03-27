@@ -15,7 +15,8 @@ class SettingsScreen extends StatelessWidget {
           _buildSettingsItem(
             icon: Icons.person,
             title: "Profile",
-            onTap: () =>  Get.offAllNamed(AppRoutes.profile), // Navigate to Profile Page
+            onTap: () => Get.toNamed(AppRoutes.profile),
+            // Navigate to Profile Page
           ),
           _buildSettingsItem(
             icon: Icons.account_balance_wallet,
