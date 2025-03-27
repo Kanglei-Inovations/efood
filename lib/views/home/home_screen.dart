@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../admin/controllers/product_controller.dart';
@@ -89,8 +90,16 @@ class HomeScreen extends StatelessWidget {
                 itemCount: foodList.length,
                 itemBuilder: (context, index) => ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.network(foodList[index].images.isNotEmpty ? foodList[index].images[0] : 'https://via.placeholder.com/150',
-                      fit: BoxFit.cover, width: double.infinity),
+                  child: CachedNetworkImage(
+                    imageUrl: foodList[index].images.isNotEmpty
+                        ? foodList[index].images[0]
+                        : 'https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-1200x675.webp',
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Center(child: CircularProgressIndicator()), // Show loader while loading
+                    errorWidget: (context, url, error) => Icon(Icons.error, size: 50, color: Colors.red), // Show error icon if failed
+                  ),
+
                 ),
               ),
             ),
@@ -145,10 +154,14 @@ class HomeScreen extends StatelessWidget {
                             Expanded(
                               child: ClipRRect(
                                 borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                                child: Image.network(
-                                  food.images.isNotEmpty ? food.images[0] : 'https://via.placeholder.com/150',
+                                child: CachedNetworkImage(
+                                  imageUrl: food.images.isNotEmpty
+                                      ? food.images[0]
+                                      : 'https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-1200x675.webp',
                                   width: double.infinity,
                                   fit: BoxFit.cover,
+                                  placeholder: (context, url) => Center(child: CircularProgressIndicator()), // Show loader while loading
+                                  errorWidget: (context, url, error) => Icon(Icons.error, size: 50, color: Colors.red), // Show error icon if failed
                                 ),
                               ),
                             ),

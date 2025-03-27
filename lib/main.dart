@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'bindings/auth_binding.dart';
+import 'controllers/order_controller.dart';
 import 'core/theme.dart';
 import 'core/routes.dart';
 
@@ -11,6 +12,7 @@ void main() async {
   await Firebase.initializeApp();
   final prefs = await SharedPreferences.getInstance();
   String? userEmail = prefs.getString("userEmail");
+  // Get.put(OrderController());
   runApp(MyApp(initialRoute: userEmail != null ? AppRoutes.home : AppRoutes.login));
 }
 
