@@ -130,6 +130,35 @@ Show order history 🛍️
   ✔ Navigates to CheckoutScreen where user enters details
   ✔ placeOrder() method in OrderController saves order to Firestore
   ✔ Cart clears after placing an order
+  Key Features
+  ✅ Animated transition between Delivery and Payment
+  ✅ Step indicator with color changes
+  ✅ Address selection with a "+" button
+  ✅ Order summary with quantity and pricing
+  ✅ Payment methods with selection options
+  ✅ Total amount display
+  ✅ Confirm → Proceed navigation
+
+I'll provide the full Flutter code now. 🚀
+
+Here's your updated checkout screen with animations for smooth transitions between the Delivery and Payment steps. 🚀
+
+Features:
+Step Indicator → Updates color when moving to the next step
+
+Smooth Transition Animation → Uses PageController
+
+Delivery Address → Users can add/select an address
+
+Order Summary → Shows product details and pricing
+
+Payment Methods → Wallet/UPI, Net Banking, Card, COD
+
+Confirm & Proceed Buttons → Step-wise flow
+
+dart
+Copy
+Edit
 
 🚀 Now your checkout process is fully working!
 Great! For checkout and billing, we need to implement:

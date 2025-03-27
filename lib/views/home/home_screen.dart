@@ -27,10 +27,7 @@ class HomeScreen extends StatelessWidget {
             onPressed: () => Get.to(const AddProductScreen()),
           ),
 
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => authController.logout(),
-          ),
+
           Stack(
             children: [
               IconButton(
