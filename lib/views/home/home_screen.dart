@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:efood/splash_screen.dart';
+import 'package:efood/views/home/product_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../admin/controllers/product_controller.dart';
@@ -20,35 +21,113 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Food Menu"),
+        title: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.grey.withOpacity(0.8)),
+
+                borderRadius: BorderRadius.circular(10),
+
+                // boxShadow: [
+                //   BoxShadow(
+                //       color: Colors.black12, blurRadius: 10, spreadRadius: 2),
+                // ],
+              ),
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(
+                      'https://img.freepik.com/premium-vector/avatar-profile-icon-flat-style-male-user-profile-vector-illustration-isolated-background-man-profile-sign-business-concept_157943-38764.jpg')),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  'Delivery Location',
+                  style: TextStyle(fontSize: 16),
+                ),
+
+                /// add location here.........
+                //DropdownButton(items: items, onChanged: onChanged)
+              ],
+            )
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.admin_panel_settings),
             onPressed: () => Get.to(const AddProductScreen()),
           ),
-
-
           Stack(
             children: [
-              IconButton(
-                icon: const Icon(Icons.shopping_cart),
-                onPressed: () => Get.toNamed("/cart"),
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.grey.withOpacity(0.8))),
+                child: IconButton(
+                  icon: const Icon(Icons.notifications),
+                  onPressed: () => Get.toNamed("/cart"),
+                ),
               ),
               Positioned(
                 right: 5,
                 top: 5,
                 child: Obx(() => cartController.cartItems.isNotEmpty
                     ? CircleAvatar(
-                  radius: 10,
-                  backgroundColor: Colors.red,
-                  child: Text(
-                    "${cartController.cartItems.length}",
-                    style: const TextStyle(fontSize: 12, color: Colors.white),
-                  ),
-                )
+                        radius: 10,
+                        backgroundColor: Colors.red,
+                        child: Text(
+                          "${cartController.cartItems.length}",
+                          style: const TextStyle(
+                              fontSize: 12, color: Colors.white),
+                        ),
+                      )
                     : const SizedBox()),
               ),
             ],
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.grey.withOpacity(0.8))),
+                child: IconButton(
+                  icon: const Icon(Icons.shopping_cart),
+                  onPressed: () => Get.toNamed("/cart"),
+                ),
+              ),
+              Positioned(
+                right: 5,
+                top: 5,
+                child: Obx(() => cartController.cartItems.isNotEmpty
+                    ? CircleAvatar(
+                        radius: 10,
+                        backgroundColor: Colors.red,
+                        child: Text(
+                          "${cartController.cartItems.length}",
+                          style: const TextStyle(
+                              fontSize: 12, color: Colors.white),
+                        ),
+                      )
+                    : const SizedBox()),
+              ),
+            ],
+          ),
+          const SizedBox(
+            width: 10,
           ),
         ],
       ),
@@ -67,201 +146,477 @@ class HomeScreen extends StatelessWidget {
             homeController.filteredProducts.assignAll(foodList);
             homeController.extractCategories();
 
-        return Column(
-          children: [
-            // 🔍 Search Bar
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: "Search...",
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                ),
-                onChanged: homeController.filterProducts,
-              ),
-            ),
-
-            // 🖼️ Banner (Slider)
-            SizedBox(
-              height: 150,
-              child: PageView.builder(
-                itemCount: foodList.length,
-                itemBuilder: (context, index) => ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: CachedNetworkImage(
-                    imageUrl: foodList[index].images.isNotEmpty
-                        ? foodList[index].images[0]
-                        : 'https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-1200x675.webp',
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Center(child: CircularProgressIndicator()), // Show loader while loading
-                    errorWidget: (context, url, error) => Icon(Icons.error, size: 50, color: Colors.red), // Show error icon if failed
-                  ),
-
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 8),
-
-            // 📂 Categories
-            Obx(() => SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: homeController.categories.map((category) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: ChoiceChip(
-                      label: Text(category),
-                      selected: homeController.selectedCategory.value == category, // ✅ Works with RxnString
-                      onSelected: (selected) {
-                        homeController.filterByCategory(category);
-                      },
-                    ),
-                  );
-                }).toList(),
-              ),
-
-
-            )),
-
-            const SizedBox(height: 8),
-
-            // 🛒 Product Grid
-            Expanded(
-              child: Obx(() =>   GridView.builder(
-                padding: const EdgeInsets.all(8),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: MediaQuery.of(context).size.width > 600 ? 3 : 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 0.75,
-                ),
-
-                itemCount: homeController.filteredProducts.length,
-                itemBuilder: (context, index) {
-                  var food = homeController.filteredProducts[index];
-                  return Card(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    elevation: 4,
-                    child: Stack(
+            return Column(
+              children: [
+                // 🔍 Search Bar
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Container(
+                    height: 55,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border:
+                            Border.all(color: Colors.grey.withOpacity(0.8))),
+                    child: Row(
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                                child: CachedNetworkImage(
-                                  imageUrl: food.images.isNotEmpty
-                                      ? food.images[0]
-                                      : 'https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-1200x675.webp',
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Center(child: CircularProgressIndicator()), // Show loader while loading
-                                  errorWidget: (context, url, error) => Icon(Icons.error, size: 50, color: Colors.red), // Show error icon if failed
+                        Expanded(
+                          child: TextField(
+                            decoration: const InputDecoration(
+                              hintText: "Search...",
+                              hintStyle: TextStyle(fontSize: 20),
+                              prefixIcon: Icon(
+                                Icons.search,
+                                size: 30,
+                              ),
+                              border: InputBorder.none, // Removes all borders
+                              enabledBorder: InputBorder
+                                  .none, // Removes border when not focused
+                              focusedBorder: InputBorder
+                                  .none, // Removes border when focused
+                            ),
+                            onChanged: homeController.filterProducts,
+                          ),
+                        ),
+                        MaterialButton(
+                          minWidth: 40,
+                          /// Scanner ..................
+                          onPressed: () {},
+                          child: const Icon(
+                            Icons.qr_code_scanner,
+                            size: 30,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+
+                // 🖼️ Banner (Slider)
+                SizedBox(
+                  height: 200, // Adjust height as needed
+                  child: PageView.builder(
+                    itemCount: foodList.length,
+                    itemBuilder: (context, index) {
+                      final foodItem = foodList[index];
+
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: ClipPath(
+                          clipper: TubeClipper(),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              // Background Image
+                              CachedNetworkImage(
+                                imageUrl: foodItem.images.isNotEmpty
+                                    ? foodItem.images[0]
+                                    : 'https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-1200x675.webp',
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) =>
+                                const Center(child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) =>
+                                const Icon(Icons.error, size: 50, color: Colors.red),
+                              ),
+
+                              // Dark Gradient Overlay (For better text visibility)
+                              Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [Colors.black.withOpacity(0.5), Colors.transparent],
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(food.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                  const SizedBox(height: 6),
 
-                                  // Price and Discount
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("₹${food.price}", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.green)),
-                                      if (food.discount > 0)
-                                        Text(
-                                          "₹${(food.price - (food.price * food.discount / 100)).toStringAsFixed(2)}",
-                                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.red, decoration: TextDecoration.lineThrough),
+                              // Content (Text & Button)
+                              Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    // Top Dots Indicator
+                                    Align(
+                                      alignment: Alignment.topCenter,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: List.generate(
+                                          foodList.length,
+                                              (dotIndex) => Container(
+                                            margin: const EdgeInsets.symmetric(horizontal: 2),
+                                            height: 6,
+                                            width: dotIndex == index ? 16 : 6,
+                                            decoration: BoxDecoration(
+                                              color: dotIndex == index
+                                                  ? Colors.orange
+                                                  : Colors.white,
+                                              borderRadius: BorderRadius.circular(3),
+                                            ),
+                                          ),
                                         ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 6),
+                                      ),
+                                    ),
 
-                                  // Icons Row (⭐ Rating, ⏳ Time, 📦 Packaging, 🏠 Takeaway)
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(children: [const Icon(Icons.star, color: Colors.amber, size: 18), const SizedBox(width: 4), Text("${food.rating}")]),
-                                      Row(children: [const Icon(Icons.timer, color: Colors.blue, size: 18), const SizedBox(width: 4), Text("${food.preparationTime} min")]),
-
-                                    ],
-                                  ),
-                                  Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    // Offer Text
+                                    const Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                    Row(
-                                      children: [
-                                        const Icon(Icons.local_shipping, color: Colors.grey, size: 18),
-                                        const SizedBox(width: 4),
-                                        Text(food.packagingType),
+                                        Text(
+                                          "Today New Offer",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Text(
+                                          "45% OFF",
+                                          style: TextStyle(
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Text(
+                                          "Today 10:30 AM - 5:00 PM",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.white70,
+                                          ),
+                                        ),
                                       ],
                                     ),
-                                        const Text("Stock"),
-                                    // Availability Status
-                                    Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Icon(food.availability ? Icons.check_circle : Icons.cancel,
-                                          color: food.availability ? Colors.green : Colors.red, size: 20),
-                                    ),
-                                  ]),
-                                  if (food.isTakeawayOnly)
-                                    const Icon(Icons.shopping_bag, color: Colors.orange, size: 18),
 
-
-
-                                  const SizedBox(height: 8),
-
-                                  // Add to Cart Button
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton.icon(
-                                      onPressed: () => cartController.addToCart(food),
-                                      icon: const Icon(Icons.add_shopping_cart, size: 18),
-                                      label: const Text("Add to Cart"),
+                                    // Button
+                                    ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.orange,
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(30),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 25, vertical: 12),
                                       ),
+                                      onPressed: () {},
+                                      child: const Text(
+                                        "Get Now",
+                                        style: TextStyle(color: Colors.white, fontSize: 16),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+                // SizedBox(
+                //   height: 300,
+                //   child: PageView.builder(
+                //     itemCount: foodList.length,
+                //     itemBuilder: (context, index) => ClipRRect(
+                //       borderRadius: BorderRadius.circular(10),
+                //       child: CachedNetworkImage(
+                //         imageUrl: foodList[index].images.isNotEmpty
+                //             ? foodList[index].images[0]
+                //             : 'https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-1200x675.webp',
+                //         width: double.infinity,
+                //         fit: BoxFit.cover,
+                //         placeholder: (context, url) => const Center(
+                //             child:
+                //                 CircularProgressIndicator()), // Show loader while loading
+                //         errorWidget: (context, url, error) => const Icon(
+                //             Icons.error,
+                //             size: 50,
+                //             color: Colors.red), // Show error icon if failed
+                //       ),
+                //     ),
+                //   ),
+                // ),
+
+                const SizedBox(height: 8),
+
+                // 📂 Categories
+                Obx(() => SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Row(
+                        children: homeController.categories.map((category) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: ChoiceChip(
+                              label: Text(category),
+                              selected: homeController.selectedCategory.value ==
+                                  category, // ✅ Works with RxnString
+                              onSelected: (selected) {
+                                homeController.filterByCategory(category);
+                              },
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    )),
+
+                const SizedBox(height: 8),
+
+                // 🛒 Product Grid
+                Expanded(
+                  child: Obx(() => GridView.builder(
+                        padding: const EdgeInsets.all(8),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount:
+                              MediaQuery.of(context).size.width > 600 ? 3 : 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 0.75,
+                        ),
+                        itemCount: homeController.filteredProducts.length,
+                        itemBuilder: (context, index) {
+                          var food = homeController.filteredProducts[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Get.to(() => ProductDetailsScreen(
+                                  productId: food
+                                      .id)); // ✅ Navigate to Track Order Page
+                            },
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              elevation: 4,
+                              child: Stack(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              const BorderRadius.vertical(
+                                                  top: Radius.circular(12)),
+                                          child: CachedNetworkImage(
+                                            imageUrl: food.images.isNotEmpty
+                                                ? food.images[0]
+                                                : 'https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-1200x675.webp',
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                            placeholder: (context, url) => Center(
+                                                child:
+                                                    CircularProgressIndicator()), // Show loader while loading
+                                            errorWidget:
+                                                (context, url, error) => Icon(
+                                                    Icons.error,
+                                                    size: 50,
+                                                    color: Colors
+                                                        .red), // Show error icon if failed
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(food.name,
+                                                style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            const SizedBox(height: 6),
+
+                                            // Price and Discount
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text("₹${food.price}",
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.green)),
+                                                if (food.discount > 0)
+                                                  Text(
+                                                    "₹${(food.price - (food.price * food.discount / 100)).toStringAsFixed(2)}",
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.red,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .lineThrough),
+                                                  ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 6),
+
+                                            // Icons Row (⭐ Rating, ⏳ Time, 📦 Packaging, 🏠 Takeaway)
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Row(children: [
+                                                  const Icon(Icons.star,
+                                                      color: Colors.amber,
+                                                      size: 18),
+                                                  const SizedBox(width: 4),
+                                                  Text("${food.rating}")
+                                                ]),
+                                                Row(children: [
+                                                  const Icon(Icons.timer,
+                                                      color: Colors.blue,
+                                                      size: 18),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                      "${food.preparationTime} min")
+                                                ]),
+                                              ],
+                                            ),
+                                            Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      const Icon(
+                                                          Icons.local_shipping,
+                                                          color: Colors.grey,
+                                                          size: 18),
+                                                      const SizedBox(width: 4),
+                                                      Text(food.packagingType),
+                                                    ],
+                                                  ),
+                                                  const Text("Stock"),
+                                                  // Availability Status
+                                                  Align(
+                                                    alignment:
+                                                        Alignment.centerRight,
+                                                    child: Icon(
+                                                        food.availability
+                                                            ? Icons.check_circle
+                                                            : Icons.cancel,
+                                                        color: food.availability
+                                                            ? Colors.green
+                                                            : Colors.red,
+                                                        size: 20),
+                                                  ),
+                                                ]),
+                                            if (food.isTakeawayOnly)
+                                              const Icon(Icons.shopping_bag,
+                                                  color: Colors.orange,
+                                                  size: 18),
+
+                                            const SizedBox(height: 8),
+
+                                            // Add to Cart Button
+                                            SizedBox(
+                                              width: double.infinity,
+                                              child: ElevatedButton.icon(
+                                                onPressed: () => cartController
+                                                    .addToCart(food),
+                                                icon: const Icon(
+                                                    Icons.add_shopping_cart,
+                                                    size: 18),
+                                                label:
+                                                    const Text("Add to Cart"),
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      Colors.orange,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8)),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  // Category Badge (Veg / Non-Veg) on Top-Left
+                                  Positioned(
+                                    top: 10,
+                                    left: 10,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            food.category.toLowerCase() == 'veg'
+                                                ? Colors.green
+                                                : Colors.red,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: const Icon(Icons.circle,
+                                          size: 12, color: Colors.white),
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                          ],
-                        ),
-
-                        // Category Badge (Veg / Non-Veg) on Top-Left
-                        Positioned(
-                          top: 10,
-                          left: 10,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: food.category.toLowerCase() == 'veg' ? Colors.green : Colors.red,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(Icons.circle, size: 12, color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-
-                },
-              )),
-            ),
-          ],
-        );
-      }),
+                          );
+                        },
+                      )),
+                ),
+              ],
+            );
+          }),
     );
   }
+
+}
+// Clipper for Banner Shape
+class CustomBannerClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    double curveHeight = 20;
+
+    path.lineTo(0, size.height - curveHeight);
+    path.quadraticBezierTo(size.width * 0.5, size.height, size.width, size.height - curveHeight);
+    path.lineTo(size.width, 0);
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
+// Clipper for Tube-Like Shape
+class TubeClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    double curveDepth = 15; // Adjust for deeper curve effect
+
+    Path path = Path();
+    path.moveTo(curveDepth, 0);
+    path.quadraticBezierTo(0, 0, 0, curveDepth);
+    path.lineTo(0, size.height - curveDepth);
+    path.quadraticBezierTo(0, size.height, curveDepth, size.height);
+    path.lineTo(size.width - curveDepth, size.height);
+    path.quadraticBezierTo(size.width, size.height, size.width, size.height - curveDepth);
+    path.lineTo(size.width, curveDepth);
+    path.quadraticBezierTo(size.width, 0, size.width - curveDepth, 0);
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
