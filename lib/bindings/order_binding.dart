@@ -4,7 +4,7 @@ import '../controllers/order_controller.dart';
 class OrderBinding extends Bindings {
   @override
   void dependencies() {
-    Get.put(OrderController());
+    Get.lazyPut<OrderController>(() => OrderController()); // ✅ Loads only when needed
 
   }
 }

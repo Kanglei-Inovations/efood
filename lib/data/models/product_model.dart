@@ -76,4 +76,46 @@ class ProductModel {
       isTakeawayOnly: map['isTakeawayOnly'] ?? false,
     );
   }
+
+  // Convert ProductModel to JSON (for SharedPreferences)
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'price': price,
+      'images': images,
+      'category': category,
+      'subCategory': subCategory,
+      'availability': availability,
+      'rating': rating,
+      'createdAt': createdAt.millisecondsSinceEpoch, // Convert Timestamp to int
+      'discount': discount,
+      'isPopular': isPopular,
+      'preparationTime': preparationTime,
+      'packagingType': packagingType,
+      'isTakeawayOnly': isTakeawayOnly,
+    };
+  }
+
+  // Convert JSON to ProductModel (for SharedPreferences)
+  factory ProductModel.fromJson(Map<String, dynamic> json) {
+    return ProductModel(
+      id: json['id'],
+      name: json['name'],
+      description: json['description'],
+      price: (json['price'] as num).toDouble(),
+      images: List<String>.from(json['images'] ?? []),
+      category: json['category'],
+      subCategory: json['subCategory'],
+      availability: json['availability'],
+      rating: (json['rating'] as num).toDouble(),
+      createdAt: Timestamp.fromMillisecondsSinceEpoch(json['createdAt']), // Convert int back to Timestamp
+      discount: (json['discount'] as num).toDouble(),
+      isPopular: json['isPopular'],
+      preparationTime: json['preparationTime'],
+      packagingType: json['packagingType'],
+      isTakeawayOnly: json['isTakeawayOnly'],
+    );
+  }
 }

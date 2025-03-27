@@ -5,10 +5,7 @@ import '../../controllers/cart_controller.dart';
 import '../../data/models/product_model.dart';
 
 class CartScreen extends StatelessWidget {
-
-
   final CartController cartController = Get.find();
-
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +22,10 @@ class CartScreen extends StatelessWidget {
               child: ListView.builder(
                 itemCount: cartController.cartItems.length,
                 itemBuilder: (context, index) {
-                  ProductModel product = cartController.cartItems[index];
+                  var item = cartController.cartItems[index];
+                  ProductModel product = item.keys.first;
+                  int quantity = item.values.first;
+
                   return ListTile(
                     leading: SizedBox(
                       width: 50,
@@ -33,17 +33,26 @@ class CartScreen extends StatelessWidget {
                         imageUrl: product.images.isNotEmpty
                             ? product.images[0]
                             : 'https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-1200x675.webp',
-                        width: double.infinity,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) => Center(child: CircularProgressIndicator()), // Show loader while loading
-                        errorWidget: (context, url, error) => Icon(Icons.error, size: 50, color: Colors.red), // Show error icon if failed
+                        placeholder: (context, url) => const CircularProgressIndicator(),
+                        errorWidget: (context, url, error) => const Icon(Icons.error, size: 50, color: Colors.red),
                       ),
                     ),
                     title: Text(product.name),
-                    subtitle: Text("₹ ${product.price}"),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.remove_circle, color: Colors.red),
-                      onPressed: () => cartController.removeFromCart(product),
+                    subtitle: Text("₹ ${product.price} x $quantity = ₹ ${product.price * quantity}"),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove_circle, color: Colors.red),
+                          onPressed: () => cartController.removeFromCart(product),
+                        ),
+                        Text(quantity.toString(), style: TextStyle(fontSize: 18)),
+                        IconButton(
+                          icon: const Icon(Icons.add_circle, color: Colors.green),
+                          onPressed: () => cartController.addToCart(product),
+                        ),
+                      ],
                     ),
                   );
                 },
