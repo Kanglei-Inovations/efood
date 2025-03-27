@@ -40,31 +40,34 @@ class OrderScreen extends StatelessWidget {
                 "Delivered": "assets/animations/delivered.json",
               };
               return Card(
-                child: ListTile(
-                  title: Text("Order #${order.id}"),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Order Date: ${order.createdAt}"),
-                      Text("Order Amount: ₹${order.totalPrice.toStringAsFixed(2)}"),
-                    ],
-                  ),
-                  trailing: Column(
-                    children: [
-                      // Center(
-                      //   child: Lottie.asset(
-                      //     statusAnimations[order.status] ?? 'assets/animations/pending.json',
-                      //     width: 50,
-                      //     height: 50,
-                      //     repeat: true,
-                      //   ),
-                      // ),
-                      Text(order.status),
-                    ],
-                  ),
-                  onTap: () {
-                    Get.to(() => TrackOrder(orderId: order.id)); // ✅ Navigate to Track Order Page
-                  },
+                child: Stack(
+                  children: [
+                    Positioned(
+                      top: 5,
+                      right: 50,
+                      child: Lottie.asset(
+                        statusAnimations[order.status] ?? 'assets/animations/pending.json',
+                        width: 100,
+                        height: 100,
+                        repeat: true,
+                        fit: BoxFit.fill,
+                      ),),
+                    ListTile(
+
+                      title: Text("Order #${order.id}"),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Order Date: ${order.createdAt}"),
+                          Text("Order Amount: ₹${order.totalPrice.toStringAsFixed(2)}"),
+                        ],
+                      ),
+                      trailing: Text(order.status, style:TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                      onTap: () {
+                        Get.to(() => TrackOrder(orderId: order.id)); // ✅ Navigate to Track Order Page
+                      },
+                    ),
+                  ],
                 ),
               );
             },

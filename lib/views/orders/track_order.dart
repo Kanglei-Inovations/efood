@@ -72,8 +72,8 @@ class TrackOrder extends StatelessWidget {
                 Center(
                   child: Lottie.asset(
                     statusAnimations[order.status] ?? 'assets/animations/pending.json',
-                    width: 200,
-                    height: 200,
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height/3,
                     repeat: true,
                   ),
                 ),
