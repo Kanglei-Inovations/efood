@@ -25,41 +25,21 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.grey.withOpacity(0.8)),
-
-                borderRadius: BorderRadius.circular(10),
-
-                // boxShadow: [
-                //   BoxShadow(
-                //       color: Colors.black12, blurRadius: 10, spreadRadius: 2),
-                // ],
-              ),
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                      'https://img.freepik.com/premium-vector/avatar-profile-icon-flat-style-male-user-profile-vector-illustration-isolated-background-man-profile-sign-business-concept_157943-38764.jpg')),
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            const Column(
+            Icon(Icons.location_on, color: Colors.black, size: 30,),
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  'Delivery Location',
-                  style: TextStyle(fontSize: 16),
+                  "Delivery Location ▼",
+                  style: TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-
-                /// add location here.........
-                //DropdownButton(items: items, onChanged: onChanged)
+                Text(
+                  "Maring Lane, Imphal East...",
+                  style: TextStyle(color: Colors.grey, fontSize: 14),
+                ),
               ],
-            )
+            ),
           ],
         ),
         actions: [
@@ -67,43 +47,13 @@ class HomeScreen extends StatelessWidget {
             icon: const Icon(Icons.admin_panel_settings),
             onPressed: () => Get.to(const AddProductScreen()),
           ),
+
           Stack(
             children: [
               Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey.withOpacity(0.8))),
-                child: IconButton(
-                  icon: const Icon(Icons.notifications),
-                  onPressed: () => Get.toNamed("/cart"),
-                ),
-              ),
-              Positioned(
-                right: 5,
-                top: 5,
-                child: Obx(() => cartController.cartItems.isNotEmpty
-                    ? CircleAvatar(
-                        radius: 10,
-                        backgroundColor: Colors.red,
-                        child: Text(
-                          "${cartController.cartItems.length}",
-                          style: const TextStyle(
-                              fontSize: 12, color: Colors.white),
-                        ),
-                      )
-                    : const SizedBox()),
-              ),
-            ],
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          Stack(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey.withOpacity(0.8))),
+                // decoration: BoxDecoration(
+                //     borderRadius: BorderRadius.circular(10),
+                //     border: Border.all(color: Colors.grey.withOpacity(0.8))),
                 child: IconButton(
                   icon: const Icon(Icons.shopping_cart),
                   onPressed: () => Get.toNamed("/cart"),
@@ -111,27 +61,23 @@ class HomeScreen extends StatelessWidget {
               ),
               Positioned(
                 right: 5,
-                top: 5,
+                top: 1,
                 child: Obx(() => cartController.cartItems.isNotEmpty
                     ? CircleAvatar(
-                        radius: 10,
-                        backgroundColor: Colors.red,
-                        child: Text(
-                          "${cartController.cartItems.length}",
-                          style: const TextStyle(
-                              fontSize: 12, color: Colors.white),
-                        ),
-                      )
+                  radius: 10,
+                  backgroundColor: Colors.red,
+                  child: Text(
+                    "${cartController.cartItems.length}",
+                    style: const TextStyle(
+                        fontSize: 12, color: Colors.white),
+                  ),
+                )
                     : const SizedBox()),
               ),
             ],
           ),
-          const SizedBox(
-            width: 10,
-          ),
-        ],
+          ],
       ),
-
       body: StreamBuilder<List<ProductModel>>(
           stream: FirestoreService().streamProducts(),
           builder: (context, snapshot) {
@@ -147,146 +93,31 @@ class HomeScreen extends StatelessWidget {
             homeController.filteredProducts.assignAll(foodList);
             homeController.extractCategories();
 
-            return Column(crossAxisAlignment: CrossAxisAlignment.start,
-
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // 🔍 Search Bar
+
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.location_on, color: Colors.black),
-                          SizedBox(width: 5),
-                          Text(
-                            "Work ▼",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintText: 'Search "paratha"',
+                      prefixIcon: Icon(Icons.search, color: Colors.red),
+                      suffixIcon: Icon(Icons.mic, color: Colors.red),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide.none,
                       ),
-                      Text(
-                        "vvvv, f Floor, Kitna Panung, India",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                      SizedBox(height: 10),
-                      // Search Bar
-                      TextField(
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          hintText: 'Search "paratha"',
-                          prefixIcon: Icon(Icons.search, color: Colors.red),
-                          suffixIcon: Icon(Icons.mic, color: Colors.red),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
+                    onChanged: homeController.filterProducts,
                   ),
                 ),
 
-                // Veg Mode Toggle
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: Colors.blue.shade200,
-                          child: Text("A", style: TextStyle(color: Colors.white)),
-                        ),
-                        SizedBox(height: 5),
-                        Text("VEG MODE", style: TextStyle(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                  ),
-                ),
 
-                // Promotional Banner
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.asset("assets/banner_image.png", fit: BoxFit.cover),
-                        Positioned(
-                          bottom: 20,
-                          child: Column(
-                            children: [
-                              Text(
-                                "Enjoy same prices as restaurant menu",
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(height: 10),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                ),
-                                onPressed: () {},
-                                child: Text("Order now", style: TextStyle(color: Colors.white)),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Container(
-                    height: 55,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border:
-                            Border.all(color: Colors.grey.withOpacity(0.8))),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            decoration: const InputDecoration(
-                              hintText: "Search...",
-                              hintStyle: TextStyle(fontSize: 20),
-                              prefixIcon: Icon(
-                                Icons.search,
-                                size: 30,
-                              ),
-                              border: InputBorder.none, // Removes all borders
-                              enabledBorder: InputBorder
-                                  .none, // Removes border when not focused
-                              focusedBorder: InputBorder
-                                  .none, // Removes border when focused
-                            ),
-                            onChanged: homeController.filterProducts,
-                          ),
-                        ),
-                        MaterialButton(
-                          minWidth: 40,
 
-                          /// Scanner ..................
-                          onPressed: () {},
-                          child: const Icon(
-                            Icons.qr_code_scanner,
-                            size: 30,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
                 // 🖼️ Banner (Slider)
                 SizedBox(
                   height: 260, // Adjust height as needed
@@ -344,7 +175,7 @@ class HomeScreen extends StatelessWidget {
                                         mainAxisSize: MainAxisSize.min,
                                         children: List.generate(
                                           foodList.length,
-                                              (dotIndex) => Container(
+                                          (dotIndex) => Container(
                                             margin: const EdgeInsets.symmetric(
                                                 horizontal: 2),
                                             height: 6,
@@ -354,7 +185,7 @@ class HomeScreen extends StatelessWidget {
                                                   ? Colors.orange
                                                   : Colors.white,
                                               borderRadius:
-                                              BorderRadius.circular(3),
+                                                  BorderRadius.circular(3),
                                             ),
                                           ),
                                         ),
@@ -425,30 +256,34 @@ class HomeScreen extends StatelessWidget {
 
                 const Padding(
                   padding: EdgeInsets.all(10),
-                  child: Text('Categories', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                  child: Text(
+                    'Categories',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                 ),
-
 
                 // 📂 Categories
                 Obx(() => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: homeController.categories.map((category) {
                             return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4),
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.orange,
+                                    color: Colors.orange,
                                     borderRadius: BorderRadius.circular(10),
-                                    border:
-                                    Border.all(color: Colors.grey.withOpacity(0.8))),
+                                    border: Border.all(
+                                        color: Colors.grey.withOpacity(0.8))),
                                 child: ChoiceChip(
                                   side: BorderSide.none,
                                   label: Text(category),
-                                  selected: homeController.selectedCategory.value ==
-                                      category, // ✅ Works with RxnString
+                                  selected:
+                                      homeController.selectedCategory.value ==
+                                          category, // ✅ Works with RxnString
                                   onSelected: (selected) {
                                     homeController.filterByCategory(category);
                                   },
@@ -458,7 +293,7 @@ class HomeScreen extends StatelessWidget {
                           }).toList(),
                         ),
                       ),
-                )),
+                    )),
 
                 const SizedBox(height: 8),
 
@@ -674,20 +509,41 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
+// Custom Clipper for Button
+class ButtonClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.moveTo(0, size.height);
+    path.lineTo(size.width * 0.85, size.height);
+    path.quadraticBezierTo(
+        size.width, size.height, size.width, size.height * 0.8);
+    path.lineTo(size.width, size.height * 0.2);
+    path.quadraticBezierTo(size.width, 0, size.width * 0.85, 0);
+    path.lineTo(0, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
 class AACustomClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
     path.moveTo(size.width * 0.00125, size.height * 0.002);
     path.lineTo(size.width, size.height * 0.002);
-    path.quadraticBezierTo(
-        size.width * 0.9996875, size.height * 0.6575, size.width, size.height * 0.902);
-    path.quadraticBezierTo(
-        size.width * 0.87375, size.height * 1.0035, size.width * 0.50125, size.height * 1.002);
-    path.quadraticBezierTo(
-        size.width * 0.124375, size.height * 1.001, size.width * -0.00125, size.height * 0.902);
-    path.quadraticBezierTo(
-        size.width * -0.000625, size.height * 0.677, size.width * 0.00125, size.height * 0.002);
+    path.quadraticBezierTo(size.width * 0.9996875, size.height * 0.6575,
+        size.width, size.height * 0.902);
+    path.quadraticBezierTo(size.width * 0.87375, size.height * 1.0035,
+        size.width * 0.50125, size.height * 1.002);
+    path.quadraticBezierTo(size.width * 0.124375, size.height * 1.001,
+        size.width * -0.00125, size.height * 0.902);
+    path.quadraticBezierTo(size.width * -0.000625, size.height * 0.677,
+        size.width * 0.00125, size.height * 0.002);
     path.close();
     return path;
   }
@@ -697,6 +553,7 @@ class AACustomClipper extends CustomClipper<Path> {
     return false; // No need to reclip unless shape changes
   }
 }
+
 // Clipper for Banner Shape
 class CustomBannerClipper extends CustomClipper<Path> {
   @override
@@ -729,12 +586,18 @@ class RPSCustomClipper extends CustomClipper<Path> {
     path.lineTo(size.width * 0.58625, size.height * 0.1);
     path.lineTo(size.width * 0.625, 0);
     path.lineTo(size.width * 0.93875, size.height * 0.002);
-    path.quadraticBezierTo(size.width * 0.99798, size.height * -0.0028, size.width, size.height * 0.102);
-    path.quadraticBezierTo(size.width, size.height * 0.3015, size.width, size.height * 0.9);
-    path.quadraticBezierTo(size.width * 1.00156, size.height * 1.0005, size.width * 0.93875, size.height * 1.002);
-    path.quadraticBezierTo(size.width * 0.71968, size.height * 1.0015, size.width * 0.0625, size.height);
-    path.quadraticBezierTo(size.width * -0.00031, size.height * 0.9985, size.width * -0.00125, size.height * 0.902);
-    path.quadraticBezierTo(size.width * -0.00125, size.height * 0.7015, size.width * -0.00125, size.height * 0.1);
+    path.quadraticBezierTo(size.width * 0.99798, size.height * -0.0028,
+        size.width, size.height * 0.102);
+    path.quadraticBezierTo(
+        size.width, size.height * 0.3015, size.width, size.height * 0.9);
+    path.quadraticBezierTo(size.width * 1.00156, size.height * 1.0005,
+        size.width * 0.93875, size.height * 1.002);
+    path.quadraticBezierTo(size.width * 0.71968, size.height * 1.0015,
+        size.width * 0.0625, size.height);
+    path.quadraticBezierTo(size.width * -0.00031, size.height * 0.9985,
+        size.width * -0.00125, size.height * 0.902);
+    path.quadraticBezierTo(size.width * -0.00125, size.height * 0.7015,
+        size.width * -0.00125, size.height * 0.1);
     path.close();
     return path;
   }

@@ -24,6 +24,7 @@ class ProfileController extends GetxController {
 
   /// Fetch User Data from Firestore
   void fetchUserData({int retryCount = 0}) async {
+    print(user.toString());
     if (user != null) {
       try {
         DocumentSnapshot snapshot = await _firestore.collection('users').doc(user!.uid).get();
@@ -73,6 +74,7 @@ class ProfileController extends GetxController {
 
   /// Update a Single Field
   Future<void> updateUserData(String field, String value) async {
+    print(user!.uid);
     if (user != null) {
       await _firestore.collection('users').doc(user!.uid).update({field: value});
       fetchUserData(); // Refresh data
