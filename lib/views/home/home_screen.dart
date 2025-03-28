@@ -131,6 +131,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
+
       body: StreamBuilder<List<ProductModel>>(
           stream: FirestoreService().streamProducts(),
           builder: (context, snapshot) {
@@ -146,7 +147,8 @@ class HomeScreen extends StatelessWidget {
             homeController.filteredProducts.assignAll(foodList);
             homeController.extractCategories();
 
-            return Column(
+            return Column(crossAxisAlignment: CrossAxisAlignment.start,
+
               children: [
                 // 🔍 Search Bar
                 Padding(
@@ -179,6 +181,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                         MaterialButton(
                           minWidth: 40,
+
                           /// Scanner ..................
                           onPressed: () {},
                           child: const Icon(
@@ -190,10 +193,12 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-
+                const SizedBox(
+                  height: 5,
+                ),
                 // 🖼️ Banner (Slider)
                 SizedBox(
-                  height: 200, // Adjust height as needed
+                  height: 260, // Adjust height as needed
                   child: PageView.builder(
                     itemCount: foodList.length,
                     itemBuilder: (context, index) {
@@ -202,9 +207,9 @@ class HomeScreen extends StatelessWidget {
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: ClipPath(
-                          clipper: TubeClipper(),
+                          clipper: RPSCustomClipper(),
                           child: Stack(
-                            fit: StackFit.expand,
+                            fit: StackFit.passthrough,
                             children: [
                               // Background Image
                               CachedNetworkImage(
@@ -212,17 +217,21 @@ class HomeScreen extends StatelessWidget {
                                     ? foodItem.images[0]
                                     : 'https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-1200x675.webp',
                                 fit: BoxFit.cover,
-                                placeholder: (context, url) =>
-                                const Center(child: CircularProgressIndicator()),
+                                placeholder: (context, url) => const Center(
+                                    child: CircularProgressIndicator()),
                                 errorWidget: (context, url, error) =>
-                                const Icon(Icons.error, size: 50, color: Colors.red),
+                                    const Icon(Icons.error,
+                                        size: 50, color: Colors.red),
                               ),
 
                               // Dark Gradient Overlay (For better text visibility)
                               Container(
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
-                                    colors: [Colors.black.withOpacity(0.5), Colors.transparent],
+                                    colors: [
+                                      Colors.black.withOpacity(0.5),
+                                      Colors.transparent
+                                    ],
                                     begin: Alignment.bottomCenter,
                                     end: Alignment.topCenter,
                                   ),
@@ -234,24 +243,27 @@ class HomeScreen extends StatelessWidget {
                                 padding: const EdgeInsets.all(20),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     // Top Dots Indicator
                                     Align(
-                                      alignment: Alignment.topCenter,
+                                      alignment: Alignment.topRight,
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: List.generate(
                                           foodList.length,
                                               (dotIndex) => Container(
-                                            margin: const EdgeInsets.symmetric(horizontal: 2),
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 2),
                                             height: 6,
                                             width: dotIndex == index ? 16 : 6,
                                             decoration: BoxDecoration(
                                               color: dotIndex == index
                                                   ? Colors.orange
                                                   : Colors.white,
-                                              borderRadius: BorderRadius.circular(3),
+                                              borderRadius:
+                                              BorderRadius.circular(3),
                                             ),
                                           ),
                                         ),
@@ -260,7 +272,8 @@ class HomeScreen extends StatelessWidget {
 
                                     // Offer Text
                                     const Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           "Today New Offer",
@@ -295,7 +308,8 @@ class HomeScreen extends StatelessWidget {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.orange,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(30),
+                                          borderRadius:
+                                              BorderRadius.circular(30),
                                         ),
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 25, vertical: 12),
@@ -303,7 +317,8 @@ class HomeScreen extends StatelessWidget {
                                       onPressed: () {},
                                       child: const Text(
                                         "Get Now",
-                                        style: TextStyle(color: Colors.white, fontSize: 16),
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 16),
                                       ),
                                     ),
                                   ],
@@ -317,51 +332,42 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
 
-                // SizedBox(
-                //   height: 300,
-                //   child: PageView.builder(
-                //     itemCount: foodList.length,
-                //     itemBuilder: (context, index) => ClipRRect(
-                //       borderRadius: BorderRadius.circular(10),
-                //       child: CachedNetworkImage(
-                //         imageUrl: foodList[index].images.isNotEmpty
-                //             ? foodList[index].images[0]
-                //             : 'https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-1200x675.webp',
-                //         width: double.infinity,
-                //         fit: BoxFit.cover,
-                //         placeholder: (context, url) => const Center(
-                //             child:
-                //                 CircularProgressIndicator()), // Show loader while loading
-                //         errorWidget: (context, url, error) => const Icon(
-                //             Icons.error,
-                //             size: 50,
-                //             color: Colors.red), // Show error icon if failed
-                //       ),
-                //     ),
-                //   ),
-                // ),
+                const Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text('Categories', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                ),
 
-                const SizedBox(height: 8),
 
                 // 📂 Categories
-                Obx(() => SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: Row(
-                        children: homeController.categories.map((category) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: ChoiceChip(
-                              label: Text(category),
-                              selected: homeController.selectedCategory.value ==
-                                  category, // ✅ Works with RxnString
-                              onSelected: (selected) {
-                                homeController.filterByCategory(category);
-                              },
-                            ),
-                          );
-                        }).toList(),
+                Obx(() => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: homeController.categories.map((category) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.orange,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border:
+                                    Border.all(color: Colors.grey.withOpacity(0.8))),
+                                child: ChoiceChip(
+                                  side: BorderSide.none,
+                                  label: Text(category),
+                                  selected: homeController.selectedCategory.value ==
+                                      category, // ✅ Works with RxnString
+                                  onSelected: (selected) {
+                                    homeController.filterByCategory(category);
+                                  },
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
                       ),
-                    )),
+                )),
 
                 const SizedBox(height: 8),
 
@@ -576,7 +582,29 @@ class HomeScreen extends StatelessWidget {
           }),
     );
   }
+}
+class AACustomClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.moveTo(size.width * 0.00125, size.height * 0.002);
+    path.lineTo(size.width, size.height * 0.002);
+    path.quadraticBezierTo(
+        size.width * 0.9996875, size.height * 0.6575, size.width, size.height * 0.902);
+    path.quadraticBezierTo(
+        size.width * 0.87375, size.height * 1.0035, size.width * 0.50125, size.height * 1.002);
+    path.quadraticBezierTo(
+        size.width * 0.124375, size.height * 1.001, size.width * -0.00125, size.height * 0.902);
+    path.quadraticBezierTo(
+        size.width * -0.000625, size.height * 0.677, size.width * 0.00125, size.height * 0.002);
+    path.close();
+    return path;
+  }
 
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
+    return false; // No need to reclip unless shape changes
+  }
 }
 // Clipper for Banner Shape
 class CustomBannerClipper extends CustomClipper<Path> {
@@ -586,7 +614,8 @@ class CustomBannerClipper extends CustomClipper<Path> {
     double curveHeight = 20;
 
     path.lineTo(0, size.height - curveHeight);
-    path.quadraticBezierTo(size.width * 0.5, size.height, size.width, size.height - curveHeight);
+    path.quadraticBezierTo(
+        size.width * 0.5, size.height, size.width, size.height - curveHeight);
     path.lineTo(size.width, 0);
     path.close();
 
@@ -597,26 +626,30 @@ class CustomBannerClipper extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
 
-// Clipper for Tube-Like Shape
-class TubeClipper extends CustomClipper<Path> {
+// Custom Clipper for the Unique Shape
+class RPSCustomClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-    double curveDepth = 15; // Adjust for deeper curve effect
-
     Path path = Path();
-    path.moveTo(curveDepth, 0);
-    path.quadraticBezierTo(0, 0, 0, curveDepth);
-    path.lineTo(0, size.height - curveDepth);
-    path.quadraticBezierTo(0, size.height, curveDepth, size.height);
-    path.lineTo(size.width - curveDepth, size.height);
-    path.quadraticBezierTo(size.width, size.height, size.width, size.height - curveDepth);
-    path.lineTo(size.width, curveDepth);
-    path.quadraticBezierTo(size.width, 0, size.width - curveDepth, 0);
+    path.moveTo(size.width * -0.00125, size.height * 0.1);
+    path.quadraticBezierTo(0, size.height * 0.001, size.width * 0.06375, 0);
+    path.quadraticBezierTo(size.width * 0.14281, 0, size.width * 0.375, 0);
+    path.lineTo(size.width * 0.41375, size.height * 0.1);
+    path.lineTo(size.width * 0.58625, size.height * 0.1);
+    path.lineTo(size.width * 0.625, 0);
+    path.lineTo(size.width * 0.93875, size.height * 0.002);
+    path.quadraticBezierTo(size.width * 0.99798, size.height * -0.0028, size.width, size.height * 0.102);
+    path.quadraticBezierTo(size.width, size.height * 0.3015, size.width, size.height * 0.9);
+    path.quadraticBezierTo(size.width * 1.00156, size.height * 1.0005, size.width * 0.93875, size.height * 1.002);
+    path.quadraticBezierTo(size.width * 0.71968, size.height * 1.0015, size.width * 0.0625, size.height);
+    path.quadraticBezierTo(size.width * -0.00031, size.height * 0.9985, size.width * -0.00125, size.height * 0.902);
+    path.quadraticBezierTo(size.width * -0.00125, size.height * 0.7015, size.width * -0.00125, size.height * 0.1);
     path.close();
-
     return path;
   }
 
   @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
+    return false; // No need to reclip unless shape changes
+  }
 }
