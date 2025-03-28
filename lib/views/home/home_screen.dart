@@ -152,6 +152,97 @@ class HomeScreen extends StatelessWidget {
               children: [
                 // 🔍 Search Bar
                 Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.location_on, color: Colors.black),
+                          SizedBox(width: 5),
+                          Text(
+                            "Work ▼",
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        "vvvv, f Floor, Kitna Panung, India",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      SizedBox(height: 10),
+                      // Search Bar
+                      TextField(
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          hintText: 'Search "paratha"',
+                          prefixIcon: Icon(Icons.search, color: Colors.red),
+                          suffixIcon: Icon(Icons.mic, color: Colors.red),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Veg Mode Toggle
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 20.0),
+                    child: Column(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: Colors.blue.shade200,
+                          child: Text("A", style: TextStyle(color: Colors.white)),
+                        ),
+                        SizedBox(height: 5),
+                        Text("VEG MODE", style: TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Promotional Banner
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Image.asset("assets/banner_image.png", fit: BoxFit.cover),
+                        Positioned(
+                          bottom: 20,
+                          child: Column(
+                            children: [
+                              Text(
+                                "Enjoy same prices as restaurant menu",
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 10),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                                onPressed: () {},
+                                child: Text("Order now", style: TextStyle(color: Colors.white)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
                   padding: const EdgeInsets.all(10),
                   child: Container(
                     height: 55,
@@ -229,18 +320,18 @@ class HomeScreen extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
-                                      Colors.black.withOpacity(0.5),
+                                      Colors.black.withOpacity(0.9),
                                       Colors.transparent
                                     ],
-                                    begin: Alignment.bottomCenter,
-                                    end: Alignment.topCenter,
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
                                   ),
                                 ),
                               ),
 
                               // Content (Text & Button)
                               Padding(
-                                padding: const EdgeInsets.all(20),
+                                padding: const EdgeInsets.all(30),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment:
@@ -248,7 +339,7 @@ class HomeScreen extends StatelessWidget {
                                   children: [
                                     // Top Dots Indicator
                                     Align(
-                                      alignment: Alignment.topRight,
+                                      alignment: Alignment.topCenter,
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: List.generate(
