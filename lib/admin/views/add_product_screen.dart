@@ -23,6 +23,7 @@ class AddProductScreenState extends State<AddProductScreen> {
   final TextEditingController descController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController discountController = TextEditingController();
+  final TextEditingController preparationTimeController = TextEditingController();
   String? selectedCategory;
   String? selectedSubCategory;
   String? selectedPackagingType;
@@ -30,16 +31,15 @@ class AddProductScreenState extends State<AddProductScreen> {
   bool isTakeawayOnly = false;
   List<File> selectedImages = [];
   final ImagePicker _picker = ImagePicker();
-  final TextEditingController preparationTimeController = TextEditingController(); // ✅
-  final List<String> categories = ["Veg", "Non-Veg","Juice","Desserts" ];
+
+  final List<String> categories = ["Veg", "Non-Veg", "Juice", "Desserts"];
   final Map<String, List<String>> subCategories = {
     "Veg": ["Salads", "Pasta", "Pizza"],
     "Non-Veg": ["Chicken", "Fish", "Mutton", "Beef"],
-    "Juice" : ["Orange", "Apple", "Mango", "Pineapple"],
-    "Desserts": ["Cake", "Ice Cream", "Pudding"]
-
+    "Juice": ["Orange", "Apple", "Mango", "Pineapple"],
+    "Desserts": ["Cake", "Ice Cream", "Pudding"],
   };
-  final List<String> packagingOptions = ["Eco-Friendly","Plastic Box", "Paper Wrap", "Foil"];
+  final List<String> packagingOptions = ["Eco-Friendly", "Plastic Box", "Paper Wrap", "Foil"];
 
   // Image Picker
   Future<void> pickImages() async {
@@ -50,11 +50,13 @@ class AddProductScreenState extends State<AddProductScreen> {
       });
     }
   }
+
   Future<void> checkAuth() async {
     if (FirebaseAuth.instance.currentUser == null) {
-      await FirebaseAuth.instance.signInAnonymously(); // Sign in anonymously if no user
+      await FirebaseAuth.instance.signInAnonymously();
     }
   }
+
   // Upload Images to Firebase Storage
   Future<List<String>> uploadImages() async {
     checkAuth();
@@ -79,126 +81,170 @@ class AddProductScreenState extends State<AddProductScreen> {
       return;
     }
 
-    List<String> imageUrls = await uploadImages(); // Upload images first
+    List<String> imageUrls = await uploadImages();
 
     final newProduct = ProductModel(
       id: const Uuid().v4(),
       name: nameController.text,
       description: descController.text,
       price: double.parse(priceController.text),
-      images: imageUrls, // Store image URLs
+      images: imageUrls,
       category: selectedCategory!,
       subCategory: selectedSubCategory ?? "",
       availability: isAvailable,
-      rating: 0.0, // Default rating
-      createdAt: Timestamp.now(), // ✅ Fix applied here
+      rating: 0.0,
+      createdAt: Timestamp.now(),
       discount: discountController.text.isEmpty ? 0.0 : double.parse(discountController.text),
-      isPopular: false, // Set later based on sales
-      preparationTime: preparationTimeController.text.isEmpty ? 15 : int.parse(preparationTimeController.text), // Default time
+      isPopular: false,
+      preparationTime: preparationTimeController.text.isEmpty ? 15 : int.parse(preparationTimeController.text),
       packagingType: selectedPackagingType ?? "",
       isTakeawayOnly: isTakeawayOnly,
     );
 
     productController.addProduct(newProduct);
-    Get.back(); // Close screen after adding
+    Get.back();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Add Product")),
+      appBar: AppBar(title: const Text("Add Product"), backgroundColor: Colors.green),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Name Input
-            TextField(controller: nameController, decoration: const InputDecoration(labelText: "Product Name")),
-            // Description Input
-            TextField(controller: descController, decoration: const InputDecoration(labelText: "Description")),
-            // Price Input
-            TextField(controller: priceController, decoration: const InputDecoration(labelText: "Price"), keyboardType: TextInputType.number),
-            // Discount Input
-            TextField(controller: discountController, decoration: const InputDecoration(labelText: "Discount (Optional)"), keyboardType: TextInputType.number),
+        child: Card(
+          elevation: 5,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                // Product Name
+                buildTextField("Product Name", nameController),
 
-            // Category Dropdown
-            DropdownButtonFormField<String>(
-              value: selectedCategory,
-              hint: const Text("Select Category"),
-              items: categories.map((cat) => DropdownMenuItem(value: cat, child: Text(cat))).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedCategory = value;
-                  selectedSubCategory = null; // Reset sub-category
-                });
-              },
-            ),
+                // Description
+                buildTextField("Description", descController),
 
-            // Sub-Category Dropdown (Based on Selected Category)
-            if (selectedCategory != null)
-              DropdownButtonFormField<String>(
-                value: selectedSubCategory,
-                hint: const Text("Select Sub-Category"),
-                items: subCategories[selectedCategory]?.map((sub) => DropdownMenuItem(value: sub, child: Text(sub))).toList(),
-                onChanged: (value) => setState(() => selectedSubCategory = value),
-              ),
-
-            // Packaging Type Dropdown
-            DropdownButtonFormField<String>(
-              value: selectedPackagingType,
-              hint: const Text("Select Packaging Type"),
-              items: packagingOptions.map((pack) => DropdownMenuItem(value: pack, child: Text(pack))).toList(),
-              onChanged: (value) => setState(() => selectedPackagingType = value),
-            ),
-
-            // Image Picker Button
-            ElevatedButton.icon(
-              onPressed: pickImages,
-              icon: const Icon(Icons.image),
-              label: const Text("Select Images"),
-            ),
-
-            // Display Selected Images
-            if (selectedImages.isNotEmpty)
-              SizedBox(
-                height: 100,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: selectedImages.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Image.file(selectedImages[index], width: 80, height: 80, fit: BoxFit.cover),
-                    );
-                  },
+                // Price & Discount Row
+                Row(
+                  children: [
+                    Expanded(child: buildTextField("Price", priceController, isNumber: true)),
+                    const SizedBox(width: 10),
+                    Expanded(child: buildTextField("Discount", discountController, isNumber: true)),
+                  ],
                 ),
-              ),
-            // ✅ Added Preparation Time Field
-            TextField(
-              controller: preparationTimeController,
-              decoration: const InputDecoration(labelText: "Preparation Time (in minutes)"),
-              keyboardType: TextInputType.number,
-            ),
-            // Availability Switch
-            SwitchListTile(
-              title: const Text("Available"),
-              value: isAvailable,
-              onChanged: (value) => setState(() => isAvailable = value),
-            ),
 
-            // Takeaway Only Switch
-            SwitchListTile(
-              title: const Text("Takeaway Only"),
-              value: isTakeawayOnly,
-              onChanged: (value) => setState(() => isTakeawayOnly = value),
-            ),
+                // Category Dropdown
+                buildDropdown("Select Category", categories, selectedCategory, (value) {
+                  setState(() {
+                    selectedCategory = value;
+                    selectedSubCategory = null;
+                  });
+                }),
 
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: addProduct,
-              child: const Text("Add Product"),
+                // Sub-Category Dropdown
+                if (selectedCategory != null)
+                  buildDropdown("Select Sub-Category", subCategories[selectedCategory] ?? [], selectedSubCategory, (value) {
+                    setState(() => selectedSubCategory = value);
+                  }),
+
+                // Packaging Type Dropdown
+                buildDropdown("Select Packaging Type", packagingOptions, selectedPackagingType, (value) {
+                  setState(() => selectedPackagingType = value);
+                }),
+
+                // Image Picker Button
+                ElevatedButton.icon(
+                  onPressed: pickImages,
+                  icon: const Icon(Icons.image),
+                  label: const Text("Select Images"),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                ),
+
+                // Display Selected Images
+                if (selectedImages.isNotEmpty)
+                  SizedBox(
+                    height: 100,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: selectedImages.length,
+                      itemBuilder: (context, index) {
+                        return Stack(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Image.file(selectedImages[index], width: 80, height: 80, fit: BoxFit.cover),
+                            ),
+                            Positioned(
+                              right: 0,
+                              child: IconButton(
+                                icon: const Icon(Icons.cancel, color: Colors.red),
+                                onPressed: () => setState(() => selectedImages.removeAt(index)),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+
+                // Preparation Time
+                buildTextField("Preparation Time (min)", preparationTimeController, isNumber: true),
+
+                // Availability Switch
+                SwitchListTile(
+                  title: const Text("Available"),
+                  value: isAvailable,
+                  onChanged: (value) => setState(() => isAvailable = value),
+                  activeColor: Colors.green,
+                ),
+
+                // Takeaway Only Switch
+                SwitchListTile(
+                  title: const Text("Takeaway Only"),
+                  value: isTakeawayOnly,
+                  onChanged: (value) => setState(() => isTakeawayOnly = value),
+                  activeColor: Colors.green,
+                ),
+
+                const SizedBox(height: 20),
+
+                // Add Product Button
+                ElevatedButton(
+                  onPressed: addProduct,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 30),
+                  ),
+                  child: const Text("Add Product", style: TextStyle(fontSize: 18)),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget buildTextField(String label, TextEditingController controller, {bool isNumber = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(labelText: label, border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
+        keyboardType: isNumber ? TextInputType.number : TextInputType.text,
+      ),
+    );
+  }
+
+  Widget buildDropdown(String hint, List<String> items, String? value, Function(String?) onChanged) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: DropdownButtonFormField(
+        decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
+        value: value,
+        hint: Text(hint),
+        items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
+        onChanged: onChanged,
       ),
     );
   }

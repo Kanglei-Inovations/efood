@@ -12,6 +12,7 @@ import '../../controllers/home_controller.dart';
 import '../../controllers/cart_controller.dart';
 import '../../data/models/product_model.dart';
 import '../../data/services/firestore_service.dart';
+import '../../widgets/Clipper_banner.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -392,34 +393,47 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Text(
                                 'Categories',
                                 style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
+                                    fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                             ),
 
                             // 📂 Categories (Horizontal Scroll)
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                               child: Row(
-                                children:
-                                    homeController.categories.map((category) {
+                                children: homeController.categories.map((category) {
+                                  bool isSelected = homeController.selectedCategory.value == category;
                                   return Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(horizontal: 4),
+                                    padding: const EdgeInsets.symmetric(horizontal: 6),
                                     child: ChoiceChip(
-                                      label: Text(category),
-                                      selected:
-                                          homeController.selectedCategory.value ==
-                                              category,
+                                      label: Text(
+                                        category,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: isSelected ? Colors.white : Colors.black87,
+                                        ),
+                                      ),
+                                      selected: isSelected,
                                       onSelected: (selected) {
                                         homeController.filterByCategory(category);
                                       },
                                       selectedColor: Colors.orange,
+                                      backgroundColor: Colors.grey[200], // Light background
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(25), // More rounded shape
+                                        side: BorderSide(color: isSelected ? Colors.orange : Colors.grey.shade400),
+                                      ),
+                                      elevation: isSelected ? 4 : 1, // Add depth effect when selected
+                                      shadowColor: Colors.orangeAccent,
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8), // Add spacing
                                     ),
                                   );
                                 }).toList(),
                               ),
                             ),
+
 
                             const SizedBox(height: 8),
 
@@ -643,78 +657,3 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class BCustomClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    path.moveTo(size.width * -0.00125, size.height * -0.002);
-    path.lineTo(size.width, size.height * -0.002);
-    path.lineTo(size.width, size.height * 0.96);
-    path.quadraticBezierTo(size.width * 0.8128125, size.height * 1.001,
-        size.width * 0.49875, size.height);
-    path.quadraticBezierTo(
-        size.width * 0.1871875, size.height, 0, size.height * 0.96);
-    path.lineTo(size.width * -0.00125, size.height * -0.002);
-    path.close();
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
-    return false;
-  }
-}
-
-class CustomBannerClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    double curveHeight = 20;
-
-    path.lineTo(0, size.height - curveHeight);
-    path.quadraticBezierTo(
-        size.width * 0.5, size.height, size.width, size.height - curveHeight);
-    path.lineTo(size.width, 0);
-    path.close();
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-}
-
-// Custom Clipper for the Unique Shape
-class RPSCustomClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    path.moveTo(size.width * -0.00125, size.height * 0.1);
-    path.quadraticBezierTo(0, size.height * 0.001, size.width * 0.06375, 0);
-    path.quadraticBezierTo(size.width * 0.14281, 0, size.width * 0.375, 0);
-    path.lineTo(size.width * 0.41375, size.height * 0.1);
-    path.lineTo(size.width * 0.58625, size.height * 0.1);
-    path.lineTo(size.width * 0.625, 0);
-    path.lineTo(size.width * 0.93875, size.height * 0.002);
-    path.quadraticBezierTo(size.width * 0.99798, size.height * -0.0028,
-        size.width, size.height * 0.102);
-    path.quadraticBezierTo(
-        size.width, size.height * 0.3015, size.width, size.height * 0.9);
-    path.quadraticBezierTo(size.width * 1.00156, size.height * 1.0005,
-        size.width * 0.93875, size.height * 1.002);
-    path.quadraticBezierTo(size.width * 0.71968, size.height * 1.0015,
-        size.width * 0.0625, size.height);
-    path.quadraticBezierTo(size.width * -0.00031, size.height * 0.9985,
-        size.width * -0.00125, size.height * 0.902);
-    path.quadraticBezierTo(size.width * -0.00125, size.height * 0.7015,
-        size.width * -0.00125, size.height * 0.1);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
-    return false; // No need to reclip unless shape changes
-  }
-}
