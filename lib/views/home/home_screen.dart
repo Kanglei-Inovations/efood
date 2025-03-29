@@ -3,6 +3,7 @@ import 'package:efood/splash_screen.dart';
 import 'package:efood/views/home/product_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import '../../admin/controllers/product_controller.dart';
 import '../../admin/views/add_product_screen.dart';
 import '../../controllers/auth_controller.dart';
@@ -46,542 +47,389 @@ class _HomeScreenState extends State<HomeScreen> {
             homeController.filteredProducts.assignAll(foodList);
             homeController.extractCategories();
             return Stack(
+              fit: StackFit.loose,
               children: [
-                ClipPath(
-                  clipper: BCustomClipper(),
-                  child: Container(
-                    width: double.infinity,
-                    height: 450,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30),
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        AppBar(
-                          backgroundColor: Colors.transparent,
-                          title: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.network(
-                                        'https://img.freepik.com/premium-vector/avatar-profile-icon-flat-style-male-user-profile-vector-illustration-isolated-background-man-profile-sign-business-concept_157943-38764.jpg')),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              const Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Delivery Location',
-                                    style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    "Wangkhem ▼",
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        ),
-                                  ),
-
-                                  /// add location here.........
-                                  //DropdownButton(items: items, onChanged: onChanged)
-                                ],
-                              )
-                            ],
-                          ),
-                          actions: [
-                            IconButton(
-                              icon: const Icon(Icons.admin_panel_settings),
-                              onPressed: () => Get.to(const AddProductScreen()),
+                // 🖼️ Banner (Slider)
+                SizedBox(
+                  height: 350, // Adjust height as needed
+                  child: ClipPath(
+                    clipper: BCustomClipper(),
+                    child: PageView.builder(
+                      itemCount: foodList.length,
+                      itemBuilder: (context, index) {
+                        final foodItem = foodList[index];
+                    
+                        return Stack(
+                          fit: StackFit.passthrough,
+                          children: [
+                            // Background Image
+                            CachedNetworkImage(
+                              imageUrl: foodItem.images.isNotEmpty
+                                  ? foodItem.images[0]
+                                  : 'https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-1200x675.webp',
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => const Center(
+                                  child: CircularProgressIndicator()),
+                              errorWidget: (context, url, error) =>
+                              const Icon(Icons.error,
+                                  size: 50, color: Colors.red),
                             ),
 
-                            Stack(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      ),
-                                  child: IconButton(
-                                    icon: const Icon(Icons.shopping_cart),
-                                    onPressed: () => Get.toNamed("/cart"),
-                                  ),
-                                ),
-                                Positioned(
-                                  right: 5,
-                                  top: 5,
-                                  child: Obx(
-                                      () => cartController.cartItems.isNotEmpty
-                                          ? CircleAvatar(
-                                              radius: 10,
-                                              backgroundColor: Colors.red,
-                                              child: Text(
-                                                "${cartController.cartItems.length}",
-                                                style: const TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.white),
-                                              ),
-                                            )
-                                          : const SizedBox()),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  height: 55,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          color: Colors.grey.withOpacity(0.8))),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: TextField(
-                                          focusNode:
-                                              homeController.searchFocusNode,
-                                          decoration: const InputDecoration(
-                                            hintText: "Search 'paratha....'",
-                                            hintStyle: TextStyle(fontSize: 20),
-                                            prefixIcon: Icon(
-                                              color: Colors.orange,
-                                              Icons.search,
-                                              size: 20,
-                                            ),
-                                            border: InputBorder
-                                                .none, // Removes all borders
-                                            enabledBorder: InputBorder
-                                                .none, // Removes border when not focused
-                                            focusedBorder: InputBorder
-                                                .none, // Removes border when focused
-                                          ),
-                                          onChanged:
-                                              homeController.filterProducts,
-                                        ),
-                                      ),
-                                      const VerticalDivider(width: 1, ),
-                                      MaterialButton(
-                                        minWidth: 40,
-
-                                        /// Scanner ..................
-                                        onPressed: () {},
-                                        child: const Icon(
-                                          Icons.keyboard_voice_sharp,
-                                          size: 20,color: Colors.orange,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                            // Dark Gradient Overlay (For better text visibility)
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.orangeAccent,
+                                    Colors.white
+                                        .withOpacity(0.3)
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 5.0),
+                            ),
+                            Positioned(
+                              top: 170,
+                              right: 10,
+                              child: Lottie.asset(
+                                'assets/animations/cooking.json',
+                                width: 250,
+                                height: 200,
+                                repeat: true,
+                                fit: BoxFit.fill,
+                              ),),
+                            // Content (Text & Button)
+                            Positioned(
+                              top: 150,
+                              child: Padding(
+                                padding: const EdgeInsets.all(30),
                                 child: Column(
-                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
-                                    const SizedBox(height: 5),
-                                    const Text(
-                                      "VEG MODE",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14),
+                                    // Top Dots Indicator
+                                    Align(
+                                      alignment: Alignment.topCenter,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: List.generate(
+                                          foodList.length,
+                                              (dotIndex) => Container(
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 2),
+                                            height: 6,
+                                            width: dotIndex == index ? 16 : 6,
+                                            decoration: BoxDecoration(
+                                              color: dotIndex == index
+                                                  ? Colors.orange
+                                                  : Colors.white,
+                                              borderRadius:
+                                              BorderRadius.circular(3),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
 
-                                    Switch(
-                                      value: isVegMode,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          isVegMode = value;
-                                        });
-                                      },
-                                      activeColor: Colors
-                                          .deepOrange, // Color when switched ON
-                                      inactiveTrackColor: Colors
-                                          .grey, // Color when switched OFF
+                                    // Offer Text
+                                    const Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Today New Offer",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Text(
+                                          "45% OFF",
+                                          style: TextStyle(
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Text(
+                                          "Today 10:30 AM - 5:00 PM",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.white70,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    // Button
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.orange,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(30),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 25, vertical: 12),
+                                      ),
+                                      onPressed: () {},
+                                      child: const Text(
+                                        "Get Now",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 16),
+                                      ),
                                     ),
                                   ],
                                 ),
-                              )
-                            ],
-                          ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 40,
+                  left: 20,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Delivery Location',
+                        style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "Wangkhem ▼",
+                        style: TextStyle(
+                          fontSize: 14,
                         ),
-                        // 🖼️ Banner (Slider)
-                        Obx(
-                          () => homeController.isSearchFocused.value
-                              ? ClipPath(clipper: CustomBannerClipper(),
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10),
+                      ),
+
+                      /// add location here.........
+                      //DropdownButton(items: items, onChanged: onChanged)
+                    ],
+                  ),
+                ),
+                Positioned(
+                  top: 40,
+                  right: 20,
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.admin_panel_settings),
+                        onPressed: () => Get.to(const AddProductScreen()),
+                      ),
+                      Stack(
+                        children: [
+                          GestureDetector(
+                            onTap: () => Get.toNamed("/cart"),
+                            child: const CircleAvatar(
+                              backgroundColor: Colors.white,
+                              child: Icon(Icons.shopping_cart, color: Colors.black),
+                            ),
+                          ),
+                          Obx(() => cartController.cartItems.isNotEmpty
+                              ? Positioned(
+                            top: 0,
+                            right: 0,
+                            child: Container(
+                              height: 18,
+                              width: 18,
+                              decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.red),
+                              child: Center(
+                                child: Text(
+                                  "${cartController.cartItems.length}",
+                                  style: const TextStyle(
+                                      fontSize: 12, color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          )
+                              : const SizedBox()),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  top: 90,
+                  left: 10,
+                  right: 10,
+                  child: Container(
+                    padding: const EdgeInsets.all(1),
+                    child: Row(
+                      children: [
+                        Flexible( // Use Flexible instead of Expanded in Positioned
+                          child: Container(
+                            height: 55,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.grey.withOpacity(0.8)),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    focusNode: homeController.searchFocusNode,
+                                    decoration: const InputDecoration(
+                                      hintText: "Search...",
+                                      hintStyle: TextStyle(fontSize: 20),
+                                      prefixIcon: Icon(Icons.search, size: 30),
+                                      border: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
                                     ),
-                                    height: 150,
-                                    child: GetBuilder<HomeController>(
-                                        builder: (controller) {
-                                      return PageView.builder(
-                                        controller: homeController.pageController,
-                                        itemCount: foodList.length,
-                                        onPageChanged: (index) => homeController
-                                            .currentPage.value = index,
-                                        itemBuilder: (context, index) {
-                                          final foodItem = foodList[index];
-                                          return Stack(
-                                            fit: StackFit.expand,
-                                            children: [
-                                              // Background Image
-                                              CachedNetworkImage(
-                                                height: 150,
-                                                imageUrl: foodItem
-                                                        .images.isNotEmpty
-                                                    ? foodItem.images[0]
-                                                    : 'https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-1200x675.webp',
-                                                fit: BoxFit.cover,
-                                                placeholder: (context, url) =>
-                                                    const Center(
-                                                        child:
-                                                            CircularProgressIndicator()),
-                                                errorWidget:
-                                                    (context, url, error) =>
-                                                        const Icon(Icons.error,
-                                                            size: 50,
-                                                            color: Colors.red),
-                                              ),
-
-                                              // Dark Gradient Overlay (For better text visibility)
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                  gradient: LinearGradient(
-                                                    colors: [
-                                                      Colors.white,
-                                                      Colors.pinkAccent
-                                                          .withOpacity(0.3)
-                                                    ],
-                                                    begin: Alignment.topCenter,
-                                                    end: Alignment.bottomCenter,
-                                                  ),
-                                                ),
-                                              ),
-
-                                              // Content (Text & Button)
-                                              Padding(
-                                                padding: const EdgeInsets.all(30),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    // Offer Text
-                                                    const Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          "Enjoy same prices\nas Restaurant Menu",
-                                                          style: TextStyle(
-                                                            fontSize: 20,
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                        SizedBox(height: 5),
-                                                        Text(
-                                                          "Today 10:30 AM - 5:00 PM",
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors.black38,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    // Button
-                                                    Align(
-                                                      alignment:
-                                                          Alignment.bottomRight,
-                                                      child: ElevatedButton(
-                                                        style: ElevatedButton
-                                                            .styleFrom(
-                                                          backgroundColor:
-                                                              Colors.orange,
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(30),
-                                                          ),
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  horizontal: 25,
-                                                                  vertical: 12),
-                                                        ),
-                                                        onPressed: () {},
-                                                        child: const Text(
-                                                          "Order Now",
-                                                          style: TextStyle(
-                                                              color: Colors.white,
-                                                              fontSize: 16),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              // Top Dots Indicator
-                                              Positioned(
-                                                top: 10,
-                                                right: 10,
-                                                child: Align(
-                                                  alignment: Alignment.topRight,
-                                                  child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: List.generate(
-                                                        foodList.length,
-                                                        (dotIndex) => Obx(
-                                                              () => Container(
-                                                                margin:
-                                                                    const EdgeInsets
-                                                                        .symmetric(
-                                                                        horizontal:
-                                                                            2),
-                                                                height: 6,
-                                                                width: dotIndex ==
-                                                                        homeController
-                                                                            .currentPage
-                                                                            .value
-                                                                    ? 16
-                                                                    : 6,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: dotIndex ==
-                                                                          homeController
-                                                                              .currentPage
-                                                                              .value
-                                                                      ? Colors
-                                                                          .orange
-                                                                      : Colors
-                                                                          .white,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              3),
-                                                                ),
-                                                              ),
-                                                            )),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    }),
-                                  ),
-                              )
-                              : ClipPath(
-                                  clipper: BCustomClipper(),
-                                  child: SizedBox(
-                                    height: 250, // Adjust height as needed
-                                    child: GetBuilder<HomeController>(
-                                      builder: (controller) {
-                                        return PageView.builder(
-                                          controller: homeController.pageController,
-                                          itemCount: foodList.length,
-                                          onPageChanged: (index) => homeController
-                                              .currentPage.value = index,
-                                          itemBuilder: (context, index) {
-                                            final foodItem = foodList[index];
-                                            return Stack(
-                                              fit: StackFit.passthrough,
-                                              children: [
-                                                // Background Image
-                                                CachedNetworkImage(
-                                                  imageUrl: foodItem
-                                                          .images.isNotEmpty
-                                                      ? foodItem.images[0]
-                                                      : 'https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-1200x675.webp',
-                                                  fit: BoxFit.cover,
-                                                  placeholder: (context, url) =>
-                                                      const Center(
-                                                          child:
-                                                              CircularProgressIndicator()),
-                                                  errorWidget:
-                                                      (context, url, error) =>
-                                                          const Icon(Icons.error,
-                                                              size: 50,
-                                                              color: Colors.red),
-                                                ),
-
-                                                // Dark Gradient Overlay (For better text visibility)
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    gradient: LinearGradient(
-                                                      colors: [
-                                                        Colors.white,
-                                                        Colors.pinkAccent
-                                                            .withOpacity(0.3)
-                                                      ],
-                                                      begin: Alignment.topCenter,
-                                                      end: Alignment.bottomCenter,
-                                                    ),
-                                                  ),
-                                                ),
-
-                                                // Content (Text & Button)
-                                                Padding(
-                                                  padding: const EdgeInsets.all(30),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.start,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      // Offer Text
-                                                      const Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            "Today New Offer",
-                                                            style: TextStyle(
-                                                              fontSize: 16,
-                                                              color: Colors.black,
-                                                              fontWeight:
-                                                                  FontWeight.w500,
-                                                            ),
-                                                          ),
-                                                          SizedBox(height: 5),
-                                                          Text(
-                                                            "45% OFF",
-                                                            style: TextStyle(
-                                                              fontSize: 30,
-                                                              fontWeight:
-                                                                  FontWeight.bold,
-                                                              color: Colors.black87,
-                                                            ),
-                                                          ),
-                                                          SizedBox(height: 5),
-                                                          Text(
-                                                            "Today 10:30 AM - 5:00 PM",
-                                                            style: TextStyle(
-                                                              fontSize: 14,
-                                                              color: Colors.black38,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-
-                                                      // Button
-                                                      ElevatedButton(
-                                                        style: ElevatedButton
-                                                            .styleFrom(
-                                                          backgroundColor:
-                                                              Colors.orange,
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(30),
-                                                          ),
-                                                          padding: const EdgeInsets
-                                                              .symmetric(
-                                                              horizontal: 25,
-                                                              vertical: 12),
-                                                        ),
-                                                        onPressed: () {},
-                                                        child: const Text(
-                                                          "Get Now",
-                                                          style: TextStyle(
-                                                              color: Colors.white,
-                                                              fontSize: 16),
-                                                        ),
-                                                      ),
-                                                      // Top Dots Indicator
-                                                      Align(
-                                                        alignment: Alignment.topRight,
-                                                        child: Row(
-                                                          mainAxisSize:
-                                                          MainAxisSize.min,
-                                                          children: List.generate(
-                                                              foodList.length,
-                                                                  (dotIndex) => Obx(
-                                                                    () => Container(
-                                                                  margin:
-                                                                  const EdgeInsets
-                                                                      .symmetric(
-                                                                      horizontal:
-                                                                      2),
-                                                                  height: 6,
-                                                                  width: dotIndex ==
-                                                                      homeController
-                                                                          .currentPage
-                                                                          .value
-                                                                      ? 16
-                                                                      : 6,
-                                                                  decoration:
-                                                                  BoxDecoration(
-                                                                    color: dotIndex ==
-                                                                        homeController
-                                                                            .currentPage
-                                                                            .value
-                                                                        ? Colors
-                                                                        .orange
-                                                                        : Colors
-                                                                        .white,
-                                                                    borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                        3),
-                                                                  ),
-                                                                ),
-                                                              )),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      }
-                                    ),
+                                    onChanged: homeController.filterProducts,
                                   ),
                                 ),
+                                IconButton(
+                                  icon: const Icon(Icons.keyboard_voice_sharp, size: 30),
+                                  onPressed: () {},
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10), // Space between search and switch
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              "VEG MODE",
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                            ),
+                            Switch(
+                              value: isVegMode,
+                              onChanged: (value) {
+                                setState(() {
+                                  isVegMode = value;
+                                });
+                              },
+                              activeColor: Colors.deepOrange,
+                              inactiveTrackColor: Colors.grey,
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
                 ),
+
+                // ClipPath(
+                //   clipper: BCustomClipper(),
+                //   child: Container(
+                //     width: double.infinity,
+                //     height: 450,
+                //     decoration: const BoxDecoration(
+                //       color: Colors.white,
+                //       borderRadius: BorderRadius.only(
+                //         topLeft: Radius.circular(30),
+                //         topRight: Radius.circular(30),
+                //       ),
+                //     ),
+                //     child: Column(
+                //       children: [
+                //         AppBar(
+                //           backgroundColor: Colors.transparent,
+                //           title: Row(
+                //             crossAxisAlignment: CrossAxisAlignment.start,
+                //             mainAxisAlignment: MainAxisAlignment.start,
+                //             children: [
+                //               Container(
+                //                 height: 50,
+                //                 width: 50,
+                //                 decoration: BoxDecoration(
+                //                   color: Colors.white,
+                //
+                //                   borderRadius: BorderRadius.circular(10),
+                //                 ),
+                //                 child: ClipRRect(
+                //                     borderRadius: BorderRadius.circular(10),
+                //                     child: Image.network(
+                //                         'https://img.freepik.com/premium-vector/avatar-profile-icon-flat-style-male-user-profile-vector-illustration-isolated-background-man-profile-sign-business-concept_157943-38764.jpg')),
+                //               ),
+                //               const SizedBox(
+                //                 width: 10,
+                //               ),
+                //               const Column(
+                //                 crossAxisAlignment: CrossAxisAlignment.start,
+                //                 mainAxisAlignment: MainAxisAlignment.start,
+                //                 children: [
+                //                   Text(
+                //                     'Delivery Location',
+                //                     style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
+                //                   ),
+                //                   Text(
+                //                     "Wangkhem ▼",
+                //                     style: TextStyle(
+                //                         fontSize: 14,
+                //                         ),
+                //                   ),
+                //
+                //                   /// add location here.........
+                //                   //DropdownButton(items: items, onChanged: onChanged)
+                //                 ],
+                //               )
+                //             ],
+                //           ),
+                //           actions: [
+                //             IconButton(
+                //               icon: const Icon(Icons.admin_panel_settings),
+                //               onPressed: () => Get.to(const AddProductScreen()),
+                //             ),
+                //
+                //             Stack(
+                //               children: [
+                //                 Container(
+                //                   decoration: BoxDecoration(
+                //                       borderRadius: BorderRadius.circular(10),
+                //                       ),
+                //                   child: IconButton(
+                //                     icon: const Icon(Icons.shopping_cart),
+                //                     onPressed: () => Get.toNamed("/cart"),
+                //                   ),
+                //                 ),
+                //                 Positioned(
+                //                   right: 5,
+                //                   top: 5,
+                //                   child: Obx(
+                //                       () => cartController.cartItems.isNotEmpty
+                //                           ? CircleAvatar(
+                //                               radius: 10,
+                //                               backgroundColor: Colors.red,
+                //                               child: Text(
+                //                                 "${cartController.cartItems.length}",
+                //                                 style: const TextStyle(
+                //                                     fontSize: 12,
+                //                                     color: Colors.white),
+                //                               ),
+                //                             )
+                //                           : const SizedBox()),
+                //                 ),
+                //               ],
+                //             ),
+                //             const SizedBox(
+                //               width: 10,
+                //             ),
+                //           ],
+                //         ),
+                //
+                //
+                //       ],
+                //     ),
+                //   ),
+                // ),
+
                 DraggableScrollableSheet(
                     initialChildSize:
                         homeController.isSearchFocused.value ? 0.8 : 0.53,

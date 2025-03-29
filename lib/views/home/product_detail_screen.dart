@@ -62,7 +62,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 top: 40,
                 left: 20,
                 child: GestureDetector(
-                  onTap: ()=>Get.to('/home'),
+                  onTap: ()=>Get.back,
                   child: CircleAvatar(
                       backgroundColor: Colors.white,
                       child: IconButton(
