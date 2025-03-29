@@ -72,8 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 width: 50,
                                 decoration: BoxDecoration(
                                   color: Colors.white,
-                                  border: Border.all(
-                                      color: Colors.grey.withOpacity(0.8)),
+
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: ClipRRect(
@@ -90,20 +89,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: [
                                   Text(
                                     'Delivery Location',
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
                                   ),
-                                  Row(
-                                    children: [
-                                      Icon(Icons.location_on,
-                                          color: Colors.black),
-                                      SizedBox(width: 5),
-                                      Text(
-                                        "Wangkhem ▼",
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
+                                  Text(
+                                    "Wangkhem ▼",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        ),
                                   ),
 
                                   /// add location here.........
@@ -117,47 +109,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               icon: const Icon(Icons.admin_panel_settings),
                               onPressed: () => Get.to(const AddProductScreen()),
                             ),
+
                             Stack(
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          color: Colors.grey.withOpacity(0.8))),
-                                  child: IconButton(
-                                    icon: const Icon(Icons.notifications),
-                                    onPressed: () => Get.toNamed("/cart"),
-                                  ),
-                                ),
-                                Positioned(
-                                  right: 5,
-                                  top: 5,
-                                  child: Obx(
-                                      () => cartController.cartItems.isNotEmpty
-                                          ? CircleAvatar(
-                                              radius: 10,
-                                              backgroundColor: Colors.red,
-                                              child: Text(
-                                                "${cartController.cartItems.length}",
-                                                style: const TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.white),
-                                              ),
-                                            )
-                                          : const SizedBox()),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Stack(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          color: Colors.grey.withOpacity(0.8))),
+                                      ),
                                   child: IconButton(
                                     icon: const Icon(Icons.shopping_cart),
                                     onPressed: () => Get.toNamed("/cart"),
@@ -206,11 +164,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                           focusNode:
                                               homeController.searchFocusNode,
                                           decoration: const InputDecoration(
-                                            hintText: "Search...",
+                                            hintText: "Search 'paratha....'",
                                             hintStyle: TextStyle(fontSize: 20),
                                             prefixIcon: Icon(
+                                              color: Colors.orange,
                                               Icons.search,
-                                              size: 30,
+                                              size: 20,
                                             ),
                                             border: InputBorder
                                                 .none, // Removes all borders
@@ -223,15 +182,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                               homeController.filterProducts,
                                         ),
                                       ),
-                                      const VerticalDivider(width: 1),
+                                      const VerticalDivider(width: 1, ),
                                       MaterialButton(
                                         minWidth: 40,
 
                                         /// Scanner ..................
                                         onPressed: () {},
                                         child: const Icon(
-                                          Icons.qr_code_scanner,
-                                          size: 30,
+                                          Icons.keyboard_voice_sharp,
+                                          size: 20,color: Colors.orange,
                                         ),
                                       ),
                                     ],
@@ -240,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0),
+                                    horizontal: 5.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -249,8 +208,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       "VEG MODE",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 13),
+                                          fontSize: 14),
                                     ),
+
                                     Switch(
                                       value: isVegMode,
                                       onChanged: (value) {
