@@ -56,7 +56,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: ClipPath(
                     clipper: BCustomClipper(),
                     child: PageView.builder(
+                      controller: homeController.pageController,
                       itemCount: foodList.length,
+                      onPageChanged: (index) {
+                        homeController.currentPage.value = index;
+                      },
                       itemBuilder: (context, index) {
                         final foodItem = foodList[index];
 
@@ -290,7 +294,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     decoration: const InputDecoration(
                                       hintText: "Search...",
                                       hintStyle: TextStyle(fontSize: 20),
-                                      prefixIcon: Icon(Icons.search, size: 30),
+                                      prefixIcon: Icon(Icons.search,color: Colors.orangeAccent, size: 30),
                                       border: InputBorder.none,
                                       enabledBorder: InputBorder.none,
                                       focusedBorder: InputBorder.none,
@@ -299,7 +303,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.keyboard_voice_sharp,
+                                  icon: const Icon(Icons.keyboard_voice_sharp,color: Colors.orangeAccent,
                                       size: 30),
                                   onPressed: () {},
                                 ),
@@ -317,16 +321,20 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 13),
                             ),
-                            Switch(
-                              value: isVegMode,
-                              onChanged: (value) {
-                                setState(() {
-                                  isVegMode = value;
-                                });
-                              },
-                              activeColor: Colors.deepOrange,
-                              inactiveTrackColor: Colors.grey,
+                            Transform.scale(
+                              scale: 0.7, // Adjust the scale factor (0.7 makes it 70% of the original size)
+                              child: Switch(
+                                value: isVegMode,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isVegMode = value;
+                                  });
+                                },
+                                activeColor: Colors.deepOrange,
+                                inactiveTrackColor: Colors.grey,
+                              ),
                             ),
+
                           ],
                         ),
                       ],
@@ -337,270 +345,274 @@ class _HomeScreenState extends State<HomeScreen> {
                 DraggableScrollableSheet(
                   initialChildSize: 0.59,
                   minChildSize: 0.59,
-                  maxChildSize: 0.85,
+                  maxChildSize: 0.8,
                   builder: (context, scrollController) {
                     return Obx(() {
-                     
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // 📌 Drag Indicator
-                          Center(
-                            child: Container(
-                              margin: const EdgeInsets.only(top: 8, bottom: 4),
-                              width: 40,
-                              height: 5,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[400],
-                                borderRadius: BorderRadius.circular(10),
+
+                      return Container(
+                        color: Colors.white,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // 📌 Drag Indicator
+                            Center(
+                              child: Container(
+                                margin: const EdgeInsets.only(top: 8, bottom: 4),
+                                width: 40,
+                                height: 5,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[400],
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
                             ),
-                          ),
 
-                          // 📌 Title
-                          const Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Text(
-                              'Categories',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            // 📌 Title
+                            const Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Text(
+                                'Categories',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
                             ),
-                          ),
 
-                          // 📂 Categories (Horizontal Scroll)
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Row(
-                              children:
-                                  homeController.categories.map((category) {
-                                return Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 4),
-                                  child: ChoiceChip(
-                                    label: Text(category),
-                                    selected:
-                                        homeController.selectedCategory.value ==
-                                            category,
-                                    onSelected: (selected) {
-                                      homeController.filterByCategory(category);
-                                    },
-                                    selectedColor: Colors.orange,
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-
-                          const SizedBox(height: 8),
-
-                          // 🛒 Product Grid
-                          Expanded(
-                            child: Obx(() => GridView.builder(
-                                  controller:
-                                      scrollController, // Enables scrolling inside the bottom sheet
-                                  padding: const EdgeInsets.all(8),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount:
-                                        MediaQuery.of(context).size.width > 600
-                                            ? 3
-                                            : 2,
-                                    crossAxisSpacing: 10,
-                                    mainAxisSpacing: 10,
-                                    childAspectRatio: 0.75,
-                                  ),
-                                  itemCount:
-                                      homeController.filteredProducts.length,
-                                  itemBuilder: (context, index) {
-                                    var food =
-                                        homeController.filteredProducts[index];
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Get.to(() => ProductDetailsScreen(
-                                            productId: food.id));
+                            // 📂 Categories (Horizontal Scroll)
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Row(
+                                children:
+                                    homeController.categories.map((category) {
+                                  return Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(horizontal: 4),
+                                    child: ChoiceChip(
+                                      label: Text(category),
+                                      selected:
+                                          homeController.selectedCategory.value ==
+                                              category,
+                                      onSelected: (selected) {
+                                        homeController.filterByCategory(category);
                                       },
-                                      child: Card(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                        elevation: 4,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Expanded(
-                                              child: ClipRRect(
-                                                borderRadius: const BorderRadius
-                                                    .vertical(
-                                                    top: Radius.circular(12)),
-                                                child: CachedNetworkImage(
-                                                  imageUrl: food
-                                                          .images.isNotEmpty
-                                                      ? food.images[0]
-                                                      : 'https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-1200x675.webp',
-                                                  width: double.infinity,
-                                                  fit: BoxFit.cover,
-                                                  placeholder: (context, url) =>
-                                                      const Center(
-                                                          child:
-                                                              CircularProgressIndicator()),
-                                                  errorWidget: (context, url,
-                                                          error) =>
-                                                      const Icon(Icons.error,
-                                                          size: 50,
-                                                          color: Colors.red),
+                                      selectedColor: Colors.orange,
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+
+                            const SizedBox(height: 8),
+
+                            // 🛒 Product Grid
+                            Expanded(
+                              child: Obx(() => GridView.builder(
+                                    controller:
+                                        scrollController, // Enables scrolling inside the bottom sheet
+                                    padding: const EdgeInsets.all(8),
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount:
+                                          MediaQuery.of(context).size.width > 600
+                                              ? 3
+                                              : 2,
+                                      crossAxisSpacing: 10,
+                                      mainAxisSpacing: 10,
+                                      childAspectRatio: 0.75,
+                                    ),
+                                    itemCount:
+                                        homeController.filteredProducts.length,
+                                    itemBuilder: (context, index) {
+                                      var food =
+                                          homeController.filteredProducts[index];
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Get.to(() => ProductDetailsScreen(
+                                              productId: food.id));
+                                        },
+                                        child: Card(
+                                          color: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          elevation: 4,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Expanded(
+                                                child: ClipRRect(
+                                                  borderRadius: const BorderRadius
+                                                      .vertical(
+                                                      top: Radius.circular(12)),
+                                                  child: CachedNetworkImage(
+                                                    imageUrl: food
+                                                            .images.isNotEmpty
+                                                        ? food.images[0]
+                                                        : 'https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-1200x675.webp',
+                                                    width: double.infinity,
+                                                    fit: BoxFit.cover,
+                                                    placeholder: (context, url) =>
+                                                        const Center(
+                                                            child:
+                                                                CircularProgressIndicator()),
+                                                    errorWidget: (context, url,
+                                                            error) =>
+                                                        const Icon(Icons.error,
+                                                            size: 50,
+                                                            color: Colors.red),
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(food.name,
-                                                      style: const TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                  const SizedBox(height: 6),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(food.name,
+                                                        style: const TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.bold)),
+                                                    const SizedBox(height: 6),
 
-                                                  // Price & Discount
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text("₹${food.price}",
-                                                          style:
-                                                              const TextStyle(
-                                                                  fontSize: 14,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                      .green)),
-                                                      if (food.discount > 0)
-                                                        Text(
-                                                          "₹${(food.price - (food.price * food.discount / 100)).toStringAsFixed(2)}",
-                                                          style: const TextStyle(
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color: Colors.red,
-                                                              decoration:
-                                                                  TextDecoration
-                                                                      .lineThrough),
+                                                    // Price & Discount
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text("₹${food.price}",
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize: 14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .green)),
+                                                        if (food.discount > 0)
+                                                          Text(
+                                                            "₹${(food.price - (food.price * food.discount / 100)).toStringAsFixed(2)}",
+                                                            style: const TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Colors.red,
+                                                                decoration:
+                                                                    TextDecoration
+                                                                        .lineThrough),
+                                                          ),
+                                                      ],
+                                                    ),
+
+                                                    const SizedBox(height: 6),
+
+                                                    // Rating & Time
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Row(children: [
+                                                          const Icon(Icons.star,
+                                                              color: Colors.amber,
+                                                              size: 18),
+                                                          const SizedBox(
+                                                              width: 4),
+                                                          Text("${food.rating}")
+                                                        ]),
+                                                        Row(children: [
+                                                          const Icon(Icons.timer,
+                                                              color: Colors.blue,
+                                                              size: 18),
+                                                          const SizedBox(
+                                                              width: 4),
+                                                          Text(
+                                                              "${food.preparationTime} min")
+                                                        ]),
+                                                      ],
+                                                    ),
+
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Row(children: [
+                                                          const Icon(
+                                                              Icons
+                                                                  .local_shipping,
+                                                              color: Colors.grey,
+                                                              size: 18),
+                                                          const SizedBox(
+                                                              width: 4),
+                                                          Text(
+                                                              food.packagingType),
+                                                        ]),
+                                                        const Text("Stock"),
+                                                        Icon(
+                                                          food.availability
+                                                              ? Icons.check_circle
+                                                              : Icons.cancel,
+                                                          color: food.availability
+                                                              ? Colors.green
+                                                              : Colors.red,
+                                                          size: 20,
                                                         ),
-                                                    ],
-                                                  ),
+                                                      ],
+                                                    ),
 
-                                                  const SizedBox(height: 6),
-
-                                                  // Rating & Time
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Row(children: [
-                                                        const Icon(Icons.star,
-                                                            color: Colors.amber,
-                                                            size: 18),
-                                                        const SizedBox(
-                                                            width: 4),
-                                                        Text("${food.rating}")
-                                                      ]),
-                                                      Row(children: [
-                                                        const Icon(Icons.timer,
-                                                            color: Colors.blue,
-                                                            size: 18),
-                                                        const SizedBox(
-                                                            width: 4),
-                                                        Text(
-                                                            "${food.preparationTime} min")
-                                                      ]),
-                                                    ],
-                                                  ),
-
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Row(children: [
-                                                        const Icon(
-                                                            Icons
-                                                                .local_shipping,
-                                                            color: Colors.grey,
-                                                            size: 18),
-                                                        const SizedBox(
-                                                            width: 4),
-                                                        Text(
-                                                            food.packagingType),
-                                                      ]),
-                                                      const Text("Stock"),
-                                                      Icon(
-                                                        food.availability
-                                                            ? Icons.check_circle
-                                                            : Icons.cancel,
-                                                        color: food.availability
-                                                            ? Colors.green
-                                                            : Colors.red,
-                                                        size: 20,
-                                                      ),
-                                                    ],
-                                                  ),
-
-                                                  if (food.isTakeawayOnly)
-                                                    const Icon(
-                                                        Icons.shopping_bag,
-                                                        color: Colors.orange,
-                                                        size: 18),
-
-                                                  const SizedBox(height: 8),
-
-                                                  // 🛒 Add to Cart Button
-                                                  SizedBox(
-                                                    width: double.infinity,
-                                                    child: ElevatedButton.icon(
-                                                      onPressed: () =>
-                                                          cartController
-                                                              .addToCart(food),
-                                                      icon: const Icon(
-                                                          Icons
-                                                              .add_shopping_cart,
+                                                    if (food.isTakeawayOnly)
+                                                      const Icon(
+                                                          Icons.shopping_bag,
+                                                          color: Colors.orange,
                                                           size: 18),
-                                                      label: const Text(
-                                                          "Add to Cart"),
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        backgroundColor:
-                                                            Colors.orange,
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8)),
+
+                                                    const SizedBox(height: 8),
+
+                                                    // 🛒 Add to Cart Button
+                                                    SizedBox(
+                                                      width: double.infinity,
+                                                      child: ElevatedButton.icon(
+                                                        onPressed: () =>
+                                                            cartController
+                                                                .addToCart(food),
+                                                        icon: const Icon(
+                                                            Icons
+                                                                .add_shopping_cart,
+                                                            size: 18),
+                                                        label: const Text(
+                                                            "Add to Cart"),
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                          backgroundColor:
+                                                              Colors.orange,
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8)),
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                )),
-                          ),
-                        ],
+                                      );
+                                    },
+                                  )),
+                            ),
+                          ],
+                        ),
                       );
                     });
                   },

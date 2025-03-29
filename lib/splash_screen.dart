@@ -13,38 +13,35 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigateToNext();
+    _initPreferences();
   }
 
-  Future<void> _navigateToNext() async {
-    await Future.delayed(const Duration(seconds: 6));
+  Future<void> _initPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     String? userEmail = prefs.getString("userEmail");
 
-    if (userEmail != null) {
-      Get.offAllNamed(AppRoutes.home);
-    } else {
-      Get.offAllNamed(AppRoutes.login);
-    }
+    Future.delayed(const Duration(seconds: 6), () {
+      if (Get.currentRoute == AppRoutes.splash) { // ✅ Check current route
+        Get.offAllNamed(userEmail != null ? AppRoutes.home : AppRoutes.login);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Customize background
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // ✅ Lottie Animation
             Lottie.asset(
-              'assets/animations/delivery.json', // Ensure the correct path
+              'assets/animations/delivery.json',
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height/2*0.9,
+              height: MediaQuery.of(context).size.height / 2 * 0.9,
               fit: BoxFit.cover,
             ),
             const SizedBox(height: 20),
-            // ✅ App Name or Tagline
             const Text(
               "E-Food",
               style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.green),

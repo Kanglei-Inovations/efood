@@ -27,19 +27,21 @@ class HomeController extends GetxController {
 
   void startAutoScroll() {
     Timer.periodic(const Duration(seconds: 3), (timer) {
+
       if (filteredProducts.isEmpty) return;
+      if (pageController.hasClients) {
+        if (currentPage.value < filteredProducts.length - 1) {
+          currentPage.value++;
+        } else {
+          currentPage.value = 0;
+        }
 
-      if (currentPage.value < filteredProducts.length - 1) {
-        currentPage.value++;
-      } else {
-        currentPage.value = 0;
+        pageController.animateToPage(
+          currentPage.value,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
       }
-
-      pageController.animateToPage(
-        currentPage.value,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-      );
     });
   }
 
