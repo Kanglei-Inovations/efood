@@ -336,9 +336,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 DraggableScrollableSheet(
                   expand: false, // Prevents auto-expanding to full screen
-                  initialChildSize: 0.7, // Starts at 70% of screen height
-                  minChildSize: 0.5, // Minimum 50% height
-                  maxChildSize: 1.0, // Can expand to full screen
+                  initialChildSize: 0.6, // Starts at 70% of screen height
+                  minChildSize: 0.6, // Minimum 50% height
+                  maxChildSize: 0.9, // Can expand to full screen
                   builder: (context, scrollController) {
                     return Obx(() {
                       if (homeController.isSearchFocused.value)
