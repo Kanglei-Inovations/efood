@@ -39,7 +39,15 @@ class _HomeScreenState extends State<HomeScreen> {
           stream: FirestoreService().streamProducts(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(
+                child: Lottie.asset(
+                  'assets/animations/delivered.json',
+                  width: 250,
+                  height: 200,
+                  repeat: true,
+                  fit: BoxFit.fill,
+                ),
+              );
             }
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return const Center(child: Text("No products available"));
@@ -238,11 +246,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           GestureDetector(
                             onTap: () => Get.toNamed("/cart"),
-                            child: const CircleAvatar(
-                              backgroundColor: Colors.white,
-                              child: Icon(Icons.shopping_cart,
-                                  color: Colors.black),
-                            ),
+                            child: Icon(Icons.shopping_cart,
+                                color: Colors.black),
                           ),
                           Obx(() => cartController.cartItems.isNotEmpty
                               ? Positioned(
@@ -624,7 +629,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         style: ElevatedButton
                                                             .styleFrom(
                                                           backgroundColor:
-                                                              Colors.orange,
+                                                              Colors.orangeAccent,
                                                           shape:
                                                               RoundedRectangleBorder(
                                                                   borderRadius:

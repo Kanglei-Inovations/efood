@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/order_controller.dart';
+import '../../controllers/profile_controller.dart';
+import '../../core/routes.dart';
 
 class CheckoutScreen extends StatefulWidget {
   @override
@@ -12,7 +15,7 @@ class CheckoutScreen extends StatefulWidget {
 class _CheckoutScreenState extends State<CheckoutScreen> {
   final CartController cartController = Get.find();
   final OrderController orderController = Get.find();
-
+  final ProfileController profileController = Get.find<ProfileController>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
@@ -76,7 +79,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           ],
                         ),
                         child: _currentStep == 0
-                            ? Icon(Icons.arrow_forward_ios_rounded, color: Colors.blue)
+                            ? Icon(Icons.arrow_forward_ios_rounded, color: Colors.orangeAccent)
                             : Icon(Icons.check, color: Colors.green),
                       ),
                     ),
@@ -114,7 +117,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         ],
                       ),
                       child: Icon(
-                          Icons.arrow_forward_ios_rounded, color: _currentStep == 0 ? Colors.grey : Colors.blue
+                          Icons.arrow_forward_ios_rounded, color: _currentStep == 0 ? Colors.grey : Colors.grey
                       ),
                     ),
                     SizedBox(width: 8),
@@ -175,19 +178,20 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("Delivery Address", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            elevation: 2,
-            child: ListTile(
-              leading: Icon(Icons.location_on, color: Colors.blue),
-              title: Text("Aftab Shah 9481924680"),
-              subtitle: Text("Hans Egedevej 29, Nuuk, Greenland-795001"),
-              trailing: IconButton(
-                icon: Icon(Icons.add_circle, color: Colors.blue),
-                onPressed: () {},
-              ),
-            ),
-          ),
+          Obx(() {
+            if (profileController.isLoading.value) {
+              return _buildLoadingCard();
+            }
+
+            final user = profileController.userModel.value;
+
+            if (user == null || user.name.isEmpty || user.phone.isEmpty || user.address.isEmpty) {
+              return _buildAddAddressCard();
+            }
+
+            return _buildUserLocationCard(user.name, user.phone, user.address);
+          }),
+
           SizedBox(height: 20),
           Text("Order Summary", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           Expanded(
@@ -207,6 +211,97 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+  // ✅ Loading state
+  Widget _buildLoadingCard() {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: Colors.blue.withOpacity(0.1),
+              child: Icon(Icons.location_on, color: Colors.orange),
+            ),
+            const SizedBox(width: 12),
+            Expanded(child: Text("Fetching location...", style: TextStyle(fontSize: 16))),
+            CircularProgressIndicator(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ✅ Card when user data is available
+  Widget _buildUserLocationCard(String name, String phone, String address) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 4,
+      shadowColor: Colors.blue.withOpacity(0.3),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: Colors.blue.withOpacity(0.1),
+              child: Icon(Icons.location_on, color: Colors.orange),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text(phone, style: TextStyle(fontSize: 14, color: Colors.grey[700])),
+                  Text(address, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: () => Get.toNamed(AppRoutes.profile),
+              child: CircleAvatar(
+                backgroundColor: Colors.blue.withOpacity(0.1),
+                child: Icon(Icons.add, color: Colors.orangeAccent),
+              ),
+            ),
+
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ✅ Card when user data is missing
+  Widget _buildAddAddressCard() {
+    return GestureDetector(
+      onTap: () => Get.toNamed(AppRoutes.profile),
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 4,
+        shadowColor: Colors.blue.withOpacity(0.3),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: Colors.blue.withOpacity(0.1),
+                child: Icon(Icons.add, color: Colors.orange),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  "Add Address",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.orange),
+                ),
+              ),
+              Icon(Icons.chevron_right, color: Colors.orangeAccent),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -263,7 +358,51 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     bool isSelected = selectedPaymentMethod == method;
 
     return GestureDetector(
-      onTap: () => setState(() => selectedPaymentMethod = method),
+      onTap: () async {
+        setState(() {
+          selectedPaymentMethod = method;
+        });
+
+        if (selectedPaymentMethod == "Wallet / UPI") {
+          // Show bottom alert
+          Get.bottomSheet(
+            Container(
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 10),
+                  Text(
+                    "Opening Payment App...",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+            isDismissible: false,
+            enableDrag: false,
+          );
+
+          // Wait for 6 seconds
+          await Future.delayed(Duration(seconds: 3));
+
+          // Close bottom alert
+          Get.back();
+
+          // Launch URL
+          final Uri url = Uri.parse("https://tinyurl.com/printonex");
+          if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+            throw Exception('Could not launch $url');
+          }
+        }
+      },
+
       child: Stack(
         clipBehavior: Clip.none, // Allows animation to overflow the card
         children: [
@@ -358,7 +497,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ElevatedButton(
             onPressed: onPressed,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue[400],
+              backgroundColor: Colors.orange,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
             child: Row(

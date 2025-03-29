@@ -34,7 +34,7 @@ class AppRoutes {
     GetPage(
       name: home,
       page: () => MainScreen(), // ✅ Load MainScreen with BottomNavBar
-      bindings: [HomeBinding(), ProductBinding(), OrderBinding()],
+      bindings: [HomeBinding(), ProductBinding(), OrderBinding(), ProfileBinding()],
     ),
     GetPage(name: cart, page: () => CartScreen(), binding: CartBinding()),
     GetPage(name: orders, page: () => OrderScreen(), binding: OrderBinding()),
