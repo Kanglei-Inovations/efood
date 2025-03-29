@@ -312,17 +312,31 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         const SizedBox(
-                            width: 10), // Space between search and switch
+                            width: 5), // Space between search and switch
                         Column(
-                          mainAxisSize: MainAxisSize.min,
+                          mainAxisSize: MainAxisSize.min, // No extra space in column
                           children: [
                             const Text(
-                              "VEG MODE",
+                              "VEG",
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 13),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 19,
+                                color: Colors.black,
+                                letterSpacing: 5,
+                                height: 1, // No extra line spacing
+                              ),
+                            ),
+                            const Text(
+                              "MODE",
+                              style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                fontSize: 16,
+                                color: Colors.black,
+                                height: 1, // No extra line spacing
+                              ),
                             ),
                             Transform.scale(
-                              scale: 0.7, // Adjust the scale factor (0.7 makes it 70% of the original size)
+                              scale: 0.8, // Adjust switch size
                               child: Switch(
                                 value: isVegMode,
                                 onChanged: (value) {
@@ -330,13 +344,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                     isVegMode = value;
                                   });
                                 },
-                                activeColor: Colors.deepOrange,
-                                inactiveTrackColor: Colors.grey,
+                                activeColor: Colors.white, // White knob when ON
+                                activeTrackColor: Colors.green, // Green background when ON
+                                inactiveTrackColor: Colors.pink.shade300, // Pink background when OFF
+                                inactiveThumbColor: Colors.white, // White knob when OFF
                               ),
                             ),
-
                           ],
-                        ),
+                        )
+
+
+
+
                       ],
                     ),
                   ),
