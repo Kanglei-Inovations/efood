@@ -7,6 +7,8 @@ import '../data/models/product_model.dart';
 class HomeController extends GetxController {
   final PageController pageController = PageController();
   var currentPage = 0.obs;
+  var isSearchVisible = false.obs; // Observable for visibility
+  double lastOffset = 0.0;
   var isSearchFocused = false.obs; // Observable variable
   var allProducts = <ProductModel>[].obs;
   var filteredProducts = <ProductModel>[].obs;

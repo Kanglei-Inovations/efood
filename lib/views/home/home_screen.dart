@@ -1,8 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:efood/splash_screen.dart';
 import 'package:efood/views/home/product_detail_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import '../../admin/controllers/product_controller.dart';
@@ -33,7 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     bool isVegMode = true; // Default value
-
     return Scaffold(
       body: StreamBuilder<List<ProductModel>>(
           stream: FirestoreService().streamProducts(),
@@ -147,7 +144,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ),
                                     ),
-
                                     // Offer Text
                                     const Column(
                                       crossAxisAlignment:
@@ -180,7 +176,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ],
                                     ),
-
                                     // Button
                                     ElevatedButton(
                                       style: ElevatedButton.styleFrom(
@@ -209,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                Positioned(
+                const Positioned(
                   top: 40,
                   left: 20,
                   child: Column(
@@ -246,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           GestureDetector(
                             onTap: () => Get.toNamed("/cart"),
-                            child: Icon(Icons.shopping_cart,
+                            child: const Icon(Icons.shopping_cart,
                                 color: Colors.black),
                           ),
                           Obx(() => cartController.cartItems.isNotEmpty
@@ -300,7 +295,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     decoration: const InputDecoration(
                                       hintText: "Search...",
                                       hintStyle: TextStyle(fontSize: 20),
-                                      prefixIcon: Icon(Icons.search,color: Colors.orangeAccent, size: 30),
+                                      prefixIcon: Icon(Icons.search,
+                                          color: Colors.orangeAccent, size: 30),
                                       border: InputBorder.none,
                                       enabledBorder: InputBorder.none,
                                       focusedBorder: InputBorder.none,
@@ -308,9 +304,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                     onChanged: homeController.filterProducts,
                                   ),
                                 ),
+                                const VerticalDivider(
+                                  width: 1,
+                                ),
                                 IconButton(
-                                  icon: const Icon(Icons.keyboard_voice_sharp,color: Colors.orangeAccent,
-                                      size: 30),
+                                  icon: const Icon(Icons.keyboard_voice_sharp,
+                                      color: Colors.orangeAccent, size: 30),
                                   onPressed: () {},
                                 ),
                               ],
@@ -320,13 +319,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(
                             width: 5), // Space between search and switch
                         Column(
-                          mainAxisSize: MainAxisSize.min, // No extra space in column
+                          mainAxisSize:
+                              MainAxisSize.min, // No extra space in column
                           children: [
                             const Text(
                               "VEG",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 19,
+                                fontSize: 16,
                                 color: Colors.black,
                                 letterSpacing: 5,
                                 height: 1, // No extra line spacing
@@ -351,29 +351,37 @@ class _HomeScreenState extends State<HomeScreen> {
                                   });
                                 },
                                 activeColor: Colors.white, // White knob when ON
-                                activeTrackColor: Colors.green, // Green background when ON
-                                inactiveTrackColor: Colors.pink.shade300, // Pink background when OFF
-                                inactiveThumbColor: Colors.white, // White knob when OFF
+                                activeTrackColor:
+                                    Colors.green, // Green background when ON
+                                inactiveTrackColor: Colors
+                                    .pink.shade300, // Pink background when OFF
+                                inactiveThumbColor:
+                                    Colors.white, // White knob when OFF
                               ),
                             ),
                           ],
                         )
-
-
-
-
                       ],
                     ),
                   ),
                 ),
-
                 DraggableScrollableSheet(
-                  initialChildSize: 0.59,
-                  minChildSize: 0.59,
-                  maxChildSize: 0.8,
+                  expand: true,
+                  initialChildSize: 0.62,
+                  minChildSize: 0.62,
+                  maxChildSize: 0.998,
                   builder: (context, scrollController) {
+                    scrollController.addListener(() {
+                      if (scrollController.offset > homeController.lastOffset) {
+                        homeController.isSearchVisible.value =
+                            false; // Hide when scrolling down
+                      } else {
+                        homeController.isSearchVisible.value =
+                            true; // Show when scrolling up
+                      }
+                      homeController.lastOffset = scrollController.offset;
+                    });
                     return Obx(() {
-
                       return Container(
                         color: Colors.white,
                         child: Column(
@@ -382,7 +390,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             // 📌 Drag Indicator
                             Center(
                               child: Container(
-                                margin: const EdgeInsets.only(top: 8, bottom: 4),
+                                margin:
+                                    const EdgeInsets.only(top: 8, bottom: 4),
                                 width: 40,
                                 height: 5,
                                 decoration: BoxDecoration(
@@ -391,6 +400,45 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                             ),
+                            Obx(
+                              () => homeController.isSearchVisible.value
+                                  ? const SizedBox.shrink()
+                                  : Padding(
+                                padding: EdgeInsets.only(left: 10, right: 10, top: 30 ),
+                                    child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              focusNode:
+                                                  homeController.searchFocusNode,
+                                              decoration: const InputDecoration(
+                                                hintText: "Search...",
+                                                hintStyle:
+                                                    TextStyle(fontSize: 20),
+                                                prefixIcon: Icon(Icons.search,
+                                                    color: Colors.orangeAccent,
+                                                    size: 30),
+                                                border: InputBorder.none,
+                                                enabledBorder: InputBorder.none,
+                                                focusedBorder: InputBorder.none,
+                                              ),
+                                              onChanged:
+                                                  homeController.filterProducts,
+                                            ),
+                                          ),
+                                          const VerticalDivider(width: 1),
+                                          IconButton(
+                                            icon: const Icon(
+                                                Icons.keyboard_voice_sharp,
+                                                color: Colors.orangeAccent,
+                                                size: 30),
+                                            onPressed: () {},
+                                          ),
+                                        ],
+                                      ),
+                                  ),
+                            ),
+                            // Hide when scrolling down
 
                             // 📌 Title
                             const Padding(
@@ -405,43 +453,57 @@ class _HomeScreenState extends State<HomeScreen> {
                             // 📂 Categories (Horizontal Scroll)
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 8),
                               child: Row(
-                                children: homeController.categories.map((category) {
-                                  bool isSelected = homeController.selectedCategory.value == category;
+                                children:
+                                    homeController.categories.map((category) {
+                                  bool isSelected =
+                                      homeController.selectedCategory.value ==
+                                          category;
                                   return Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6),
                                     child: ChoiceChip(
                                       label: Text(
                                         category,
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
-                                          color: isSelected ? Colors.white : Colors.black87,
+                                          color: isSelected
+                                              ? Colors.white
+                                              : Colors.black87,
                                         ),
                                       ),
                                       selected: isSelected,
                                       onSelected: (selected) {
-                                        homeController.filterByCategory(category);
+                                        homeController
+                                            .filterByCategory(category);
                                       },
                                       selectedColor: Colors.orange,
-                                      backgroundColor: Colors.grey[200], // Light background
+                                      backgroundColor:
+                                          Colors.grey[200], // Light background
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(25), // More rounded shape
-                                        side: BorderSide(color: isSelected ? Colors.orange : Colors.grey.shade400),
+                                        borderRadius: BorderRadius.circular(
+                                            25), // More rounded shape
+                                        side: BorderSide(
+                                            color: isSelected
+                                                ? Colors.orange
+                                                : Colors.grey.shade400),
                                       ),
-                                      elevation: isSelected ? 4 : 1, // Add depth effect when selected
+                                      elevation: isSelected
+                                          ? 4
+                                          : 1, // Add depth effect when selected
                                       shadowColor: Colors.orangeAccent,
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8), // Add spacing
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 8), // Add spacing
                                     ),
                                   );
                                 }).toList(),
                               ),
                             ),
-
-
                             const SizedBox(height: 8),
-
                             // 🛒 Product Grid
                             Expanded(
                               child: Obx(() => GridView.builder(
@@ -451,7 +513,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     gridDelegate:
                                         SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount:
-                                          MediaQuery.of(context).size.width > 600
+                                          MediaQuery.of(context).size.width >
+                                                  600
                                               ? 3
                                               : 2,
                                       crossAxisSpacing: 10,
@@ -461,8 +524,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     itemCount:
                                         homeController.filteredProducts.length,
                                     itemBuilder: (context, index) {
-                                      var food =
-                                          homeController.filteredProducts[index];
+                                      var food = homeController
+                                          .filteredProducts[index];
                                       return GestureDetector(
                                         onTap: () {
                                           Get.to(() => ProductDetailsScreen(
@@ -481,9 +544,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                             children: [
                                               Expanded(
                                                 child: ClipRRect(
-                                                  borderRadius: const BorderRadius
-                                                      .vertical(
-                                                      top: Radius.circular(12)),
+                                                  borderRadius:
+                                                      const BorderRadius
+                                                          .vertical(
+                                                          top: Radius.circular(
+                                                              12)),
                                                   child: CachedNetworkImage(
                                                     imageUrl: food
                                                             .images.isNotEmpty
@@ -491,7 +556,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         : 'https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-1200x675.webp',
                                                     width: double.infinity,
                                                     fit: BoxFit.cover,
-                                                    placeholder: (context, url) =>
+                                                    placeholder: (context,
+                                                            url) =>
                                                         const Center(
                                                             child:
                                                                 CircularProgressIndicator()),
@@ -514,7 +580,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         style: const TextStyle(
                                                             fontSize: 16,
                                                             fontWeight:
-                                                                FontWeight.bold)),
+                                                                FontWeight
+                                                                    .bold)),
                                                     const SizedBox(height: 6),
 
                                                     // Price & Discount
@@ -524,14 +591,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                               .spaceBetween,
                                                       children: [
                                                         Text("₹${food.price}",
-                                                            style:
-                                                                const TextStyle(
-                                                                    fontSize: 14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: Colors
-                                                                        .green)),
+                                                            style: const TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Colors
+                                                                    .green)),
                                                         if (food.discount > 0)
                                                           Text(
                                                             "₹${(food.price - (food.price * food.discount / 100)).toStringAsFixed(2)}",
@@ -540,7 +606,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                color: Colors.red,
+                                                                color:
+                                                                    Colors.red,
                                                                 decoration:
                                                                     TextDecoration
                                                                         .lineThrough),
@@ -558,15 +625,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       children: [
                                                         Row(children: [
                                                           const Icon(Icons.star,
-                                                              color: Colors.amber,
+                                                              color:
+                                                                  Colors.amber,
                                                               size: 18),
                                                           const SizedBox(
                                                               width: 4),
                                                           Text("${food.rating}")
                                                         ]),
                                                         Row(children: [
-                                                          const Icon(Icons.timer,
-                                                              color: Colors.blue,
+                                                          const Icon(
+                                                              Icons.timer,
+                                                              color:
+                                                                  Colors.blue,
                                                               size: 18),
                                                           const SizedBox(
                                                               width: 4),
@@ -585,21 +655,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           const Icon(
                                                               Icons
                                                                   .local_shipping,
-                                                              color: Colors.grey,
+                                                              color:
+                                                                  Colors.grey,
                                                               size: 18),
                                                           const SizedBox(
                                                               width: 4),
-                                                          Text(
-                                                              food.packagingType),
+                                                          Text(food
+                                                              .packagingType),
                                                         ]),
                                                         const Text("Stock"),
                                                         Icon(
                                                           food.availability
-                                                              ? Icons.check_circle
+                                                              ? Icons
+                                                                  .check_circle
                                                               : Icons.cancel,
-                                                          color: food.availability
-                                                              ? Colors.green
-                                                              : Colors.red,
+                                                          color:
+                                                              food.availability
+                                                                  ? Colors.green
+                                                                  : Colors.red,
                                                           size: 20,
                                                         ),
                                                       ],
@@ -616,10 +689,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     // 🛒 Add to Cart Button
                                                     SizedBox(
                                                       width: double.infinity,
-                                                      child: ElevatedButton.icon(
+                                                      child:
+                                                          ElevatedButton.icon(
                                                         onPressed: () =>
                                                             cartController
-                                                                .addToCart(food),
+                                                                .addToCart(
+                                                                    food),
                                                         icon: const Icon(
                                                             Icons
                                                                 .add_shopping_cart,
@@ -629,13 +704,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         style: ElevatedButton
                                                             .styleFrom(
                                                           backgroundColor:
-                                                              Colors.orangeAccent,
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8)),
+                                                              Colors
+                                                                  .orangeAccent,
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8)),
                                                         ),
                                                       ),
                                                     ),
@@ -661,4 +736,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
